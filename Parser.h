@@ -1,0 +1,17 @@
+//
+// Created by pravin on 4/6/22.
+//
+
+#ifndef INC_22S_FINAL_PROJ_PARSER_H
+#define INC_22S_FINAL_PROJ_PARSER_H
+
+#include <string>
+
+using std::string;
+
+class Parser {
+    void build_data(string folderpath);
+};
+
+
+#endif //INC_22S_FINAL_PROJ_PARSER_H

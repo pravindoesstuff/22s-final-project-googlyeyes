@@ -37,10 +37,10 @@ Query::Query(const string &query) {
                     this->not_words.push_back(token);
                     break;
                 case ORG:
-                    this->org = token;
+                    this->organizations.push_back(token);
                     break;
                 case PERSON :
-                    this->person = token;
+                    this->people.push_back(token);
                     break;
             }
         }
