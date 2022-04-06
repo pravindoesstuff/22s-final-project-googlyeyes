@@ -3,4 +3,4 @@ project(22s_final_proj)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(22s_final_proj main.cpp catch_setup.cpp)
+add_executable(22s_final_proj main.cpp catch_setup.cpp Query.cpp Query.h)
