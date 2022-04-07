@@ -9,3 +9,4 @@
 ## Links:
 
 - Tutorial on RapidJSON by TA Christian > [here](https://github.com/Gouldilocks/rapidTutorial) <. 
+- Project Handout > [here](https://docs.google.com/document/d/1210mEIwg2rVnId4POk5gmaWFZ3mD27dts4Kwh4RTBbA/edit?usp=sharing) <.
