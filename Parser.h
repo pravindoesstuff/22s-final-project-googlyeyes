@@ -10,7 +10,8 @@
 using std::string;
 
 class Parser {
-    void build_data(string folderpath);
+public:
+    static void build_data(const string& folderpath);
 };
 
 

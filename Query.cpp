@@ -40,7 +40,7 @@ Query::Query(const string &query) {
                     this->organizations.push_back(token);
                     break;
                 case PERSON :
-                    this->people.push_back(token);
+                    this->persons.push_back(token);
                     break;
             }
         }
