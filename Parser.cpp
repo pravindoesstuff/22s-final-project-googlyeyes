@@ -1,27 +1,6 @@
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <thread>
-
-#include <future>
-#include <queue>
-
-#include <vector>
 #include "Parser.h"
-#include "Article.h"
-#include "rapidjson/document.h"
-#include "thread_pool.h"
 
-#include <exception>
-
-
-/*
- * @Params:         "json_file" a representation for a json file within the filesystem to retrieve data from.
- * @return:         "Article" with attributes derived from the JSON file being read
- * @description:    Read a json_file (usually from a directory_iterator) and returns an
- *                  'Article' object with the attributes derived from the JSON file pointed by the json_file
- */
-Article parse_data(const std::filesystem::directory_entry &json_file) {
+Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
 
     //1- Open stream to file
     std::ifstream file(json_file.path());
@@ -62,7 +41,7 @@ Article parse_data(const std::filesystem::directory_entry &json_file) {
     return article;
 }
 
-std::vector<Article> parse_folder(const std::filesystem::directory_entry &folder) {
+std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry &folder) {
     std::vector<Article> articles;
     for (const auto &entry: std::filesystem::directory_iterator(folder)) {
         try {
@@ -79,11 +58,16 @@ void Parser::build_data(const string &kaggle_path) {
     std::queue<std::future<std::vector<Article>>> future_queue;
     std::vector<Article> articles;
 
-    //go through all directories within "kaggle_path"
+    //For EACH folder within kaggle_data_dir
     for (const auto &year_dir: kaggle_data_dir) {
+        //1- asynchronously call "parse_folder" on each folder. NOTE: std::future will store "parse_folder" return value once available.
         std::future<vector<Article>> future_article_vec = std::async(parse_folder, year_dir);
+
+        //2- Add future object to queue.
         future_queue.push(std::move(future_article_vec));
     }
+
+    //What happen here? Ask Pravin to help you understand.
     while (!future_queue.empty()) {
         std::vector<Article> queued_articles = future_queue.front().get();
         articles.insert(articles.end(), queued_articles.begin(), queued_articles.end());
