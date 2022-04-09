@@ -11,7 +11,8 @@ using std::string;
 
 class Parser {
 public:
-    static void build_data(const string& folderpath);
+    static void build_data(const string& kaggle_path);
+
 };
 
 
