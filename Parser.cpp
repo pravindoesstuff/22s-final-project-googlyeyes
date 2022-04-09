@@ -16,7 +16,7 @@
 
 
 /*
- * @Params:         "json_file" a representation for a json file within the filesystem to retrieve Article data from.
+ * @Params:         "json_file" a representation for a json file within the filesystem to retrieve data from.
  * @return:         "Article" with attributes derived from the JSON file being read
  * @description:    Read a json_file (usually from a directory_iterator) and returns an
  *                  'Article' object with the attributes derived from the JSON file pointed by the json_file
@@ -39,7 +39,6 @@ Article parse_data(const std::filesystem::directory_entry &json_file) {
     //5- if "json_string" is invalid, throw exception
     if (!JSON_document.IsObject()) {
         throw std::exception();
-        //throw "RapidJSON couldn't parse :-(";
     }
 
     //6-
@@ -79,6 +78,8 @@ void Parser::build_data(const string &kaggle_path) {
     auto kaggle_data_dir = std::filesystem::directory_iterator(kaggle_path);
     std::queue<std::future<std::vector<Article>>> future_queue;
     std::vector<Article> articles;
+
+    //go through all directories within "kaggle_path"
     for (const auto &year_dir: kaggle_data_dir) {
         std::future<vector<Article>> future_article_vec = std::async(parse_folder, year_dir);
         future_queue.push(std::move(future_article_vec));
