@@ -38,7 +38,8 @@ Article parse_data(const std::filesystem::directory_entry &json_file) {
 
     //5- if "json_string" is invalid, throw exception
     if (!JSON_document.IsObject()) {
-        throw "RapidJSON couldn't parse :-(";
+        throw std::exception();
+        //throw "RapidJSON couldn't parse :-(";
     }
 
     //6-
@@ -65,7 +66,11 @@ Article parse_data(const std::filesystem::directory_entry &json_file) {
 std::vector<Article> parse_folder(const std::filesystem::directory_entry &folder) {
     std::vector<Article> articles;
     for (const auto &entry: std::filesystem::directory_iterator(folder)) {
-        articles.emplace_back(parse_data(entry));
+        try {
+            articles.emplace_back(parse_data(entry));
+        } catch (std::exception &e) {
+            std::cerr << e.what() << '\n';
+        }
     }
     return articles;
 }
