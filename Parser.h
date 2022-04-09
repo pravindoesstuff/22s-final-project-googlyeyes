@@ -12,11 +12,9 @@
 
 #include <string>
 
-using std::string;
-
 class Parser {
 public:
-    static void build_data(const string& kaggle_path);
+    static void build_data(const std::string& kaggle_path);
 
 };
 

@@ -1,7 +1,3 @@
-//
-// Created by pravin on 4/6/22.
-//
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -18,40 +14,51 @@
 
 #include <exception>
 
-class InvalidFile {
-
-};
-
 
 /*
- * @Params entry is the stl representation for the json file within the filesystem to retrieve Article data from.
- * @return Article with attributes derived from the JSON file being read
- * @description Intakes a constant directory entry (usually from a directory_iterator) and returns an 'Article' with the attributes derived from the JSON file pointed by the entry
+ * @Params:         "json_file" a representation for a json file within the filesystem to retrieve Article data from.
+ * @return:         "Article" with attributes derived from the JSON file being read
+ * @description:    Read a json_file (usually from a directory_iterator) and returns an
+ *                  'Article' object with the attributes derived from the JSON file pointed by the json_file
  */
-Article parse_data(const std::filesystem::directory_entry &entry) {
-    std::ifstream file(entry.path());
-    string json_string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+Article parse_data(const std::filesystem::directory_entry &json_file) {
+
+    //1- Open stream to file
+    std::ifstream file(json_file.path());
+
+    //2- Read the file into "json_string"
+    std::string json_string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    //3- Close the stream
     file.close();
-    Article article;
-    rapidjson::Document document;
-    document.Parse(json_string.c_str());
-    if (!document.IsObject()) {
-        std::cerr << "RapidJSON couldn't parse " << entry.path() << '\n';
-        return article;
+
+    //4- Parsing "json_string" into "JSON_document" using rapidjson
+    rapidjson::Document JSON_document;
+    JSON_document.Parse(json_string.c_str());
+
+    //5- if "json_string" is invalid, throw exception
+    if (!JSON_document.IsObject()) {
+        throw "RapidJSON couldn't parse :-(";
     }
-    auto &entities = document["entities"];
-    auto &persons = entities["persons"];
+
+    //6-
+    Article article;
+    auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
+    auto &persons = entities["persons"]; //an array
     if (!persons.IsNull()) {
         for (const auto &person: persons.GetArray()) {
+            //add person names to article vector named "persons"
             article.persons.emplace_back(person["name"].GetString());
         }
     }
-    auto &organizations = entities["organizations"];
+    auto &organizations = entities["organizations"]; //an array
     if (!organizations.IsNull()) {
         for (const auto &organization: organizations.GetArray()) {
-            article.persons.emplace_back(organization["name"].GetString());
+            //add organization names to article vector named "organizations"
+            article.organizations.emplace_back(organization["name"].GetString());
         }
     }
+
     return article;
 }
 
