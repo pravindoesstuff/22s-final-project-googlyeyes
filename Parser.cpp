@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
+Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 
     //1- Open stream to file
     std::ifstream file(json_file.path());
@@ -20,7 +20,7 @@ Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
         throw std::exception();
     }
 
-    //6-
+    //6- Store "persons name" into Article
     Article article;
     auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
     auto &persons = entities["persons"]; //an array
@@ -30,6 +30,8 @@ Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
             article.persons.emplace_back(person["name"].GetString());
         }
     }
+
+    //7- Store "organizations name" into Article
     auto &organizations = entities["organizations"]; //an array
     if (!organizations.IsNull()) {
         for (const auto &organization: organizations.GetArray()) {
@@ -40,6 +42,25 @@ Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
     auto &text = JSON_document["text"];
     article.text = text.GetString();
 
+    //8- Store text
+    article.text = JSON_document["text"].GetString();
+
+    //9- Tokenize, lowercase, and stemming
+    std::istringstream ss (JSON_document["text"].GetString());
+    std::string token;
+    while(std::getline(ss, token, ' ')){
+        //if stop-word, ignore.
+        if(stop_words.find(token) != stop_words.end()) continue;
+        //punctuation removal
+        token.erase(std::remove_if(token.begin(), token.end(), ::ispunct), token.end());
+        //lowering. I used std::transform to mutate "token" directly
+        std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+        //stem token
+        Porter2Stemmer::stem(token);
+        //add token to list of tokens in the article.
+        article.tokens.emplace_back(token);
+    }
+
     return article;
 }
 
@@ -47,7 +68,7 @@ std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry
     std::vector<Article> articles;
     for (const auto &entry: std::filesystem::directory_iterator(folder)) {
         try {
-            articles.emplace_back(parse_data(entry));
+            articles.emplace_back(parse_json(entry));
         } catch (std::exception &e) {
             std::cerr << e.what() << '\n';
         }
@@ -55,15 +76,16 @@ std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry
     return articles;
 }
 
-void Parser::build_data(const string &kaggle_path) {
+std::vector<std::vector<Article>> Parser::parse(const std::string &kaggle_path) {
+    std::vector<std::vector<Article>> article_folders;
+
     auto kaggle_data_dir = std::filesystem::directory_iterator(kaggle_path);
     std::queue<std::future<std::vector<Article>>> future_queue;
-    std::vector<Article> articles;
 
     //For EACH folder within kaggle_data_dir
     for (const auto &year_dir: kaggle_data_dir) {
         //1- asynchronously call "parse_folder" on each folder. NOTE: std::future will store "parse_folder" return value once available.
-        std::future<vector<Article>> future_article_vec = std::async(parse_folder, year_dir);
+        std::future<std::vector<Article>> future_article_vec = std::async(parse_folder, year_dir);
 
         //2- Add future object to queue.
         future_queue.push(std::move(future_article_vec));
@@ -72,7 +94,9 @@ void Parser::build_data(const string &kaggle_path) {
     //What happen here? Ask Pravin to help you understand.
     while (!future_queue.empty()) {
         std::vector<Article> queued_articles = future_queue.front().get();
-        articles.insert(articles.end(), queued_articles.begin(), queued_articles.end());
+        article_folders.emplace_back(queued_articles);
         future_queue.pop();
     }
+
+    return article_folders;
 }

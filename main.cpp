@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Parser.h"
 int main() {
-    Parser::build_data("../assets/kaggle/");
+    Parser::parse("../assets/kaggle/");
     return 0;
 }
