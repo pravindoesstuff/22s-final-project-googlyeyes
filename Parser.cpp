@@ -37,6 +37,8 @@ Article Parser::parse_data(const std::filesystem::directory_entry &json_file) {
             article.organizations.emplace_back(organization["name"].GetString());
         }
     }
+    auto &text = JSON_document["text"];
+    article.text = text.GetString();
 
     return article;
 }
