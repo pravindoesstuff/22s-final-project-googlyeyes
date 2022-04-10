@@ -74,10 +74,11 @@ std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry
     return articles;
 }
 
-void Parser::parse(const std::string &kaggle_path) {
+std::vector<std::vector<Article>> Parser::parse(const std::string &kaggle_path) {
+    std::vector<std::vector<Article>> article_folders;
+
     auto kaggle_data_dir = std::filesystem::directory_iterator(kaggle_path);
     std::queue<std::future<std::vector<Article>>> future_queue;
-    std::vector<Article> articles;
 
     //For EACH folder within kaggle_data_dir
     for (const auto &year_dir: kaggle_data_dir) {
@@ -91,7 +92,9 @@ void Parser::parse(const std::string &kaggle_path) {
     //What happen here? Ask Pravin to help you understand.
     while (!future_queue.empty()) {
         std::vector<Article> queued_articles = future_queue.front().get();
-        articles.insert(articles.end(), queued_articles.begin(), queued_articles.end());
+        article_folders.emplace_back(queued_articles);
         future_queue.pop();
     }
+
+    return article_folders;
 }

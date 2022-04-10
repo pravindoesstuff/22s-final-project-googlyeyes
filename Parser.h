@@ -119,7 +119,7 @@ public:
     /// \return void        -> N.A.
     /// \description        -> asynchronously call "parse_folder" on EACH folder within
     ///                     "kaggle_path"
-    static void parse(const std::string& kaggle_path);
+    static std::vector<std::vector<Article>> parse(const std::string& kaggle_path);
 };
 
 
