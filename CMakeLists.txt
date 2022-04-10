@@ -4,4 +4,4 @@ project(22s_final_proj)
 set(CMAKE_CXX_STANDARD 17)
 
 SET(CMAKE_CXX_FLAGS -pthread)
-add_executable(22s_final_proj main.cpp catch_setup.cpp Query.cpp Query.h Parser.cpp Parser.h Article.h thread_pool.h)
+add_executable(22s_final_proj main.cpp catch_setup.cpp Query.cpp Query.h Parser.cpp Parser.h Article.h thread_pool.h porter2_stemmer.cpp porter2_stemmer.h util/hash.h util/string_view.h)
