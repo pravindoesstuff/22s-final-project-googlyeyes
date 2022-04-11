@@ -177,12 +177,6 @@ private:
     ///                     text) from raw JSON file
     static Article parse_json(const std::filesystem::directory_entry &json_file);
 
-    ///
-    /// \param folder       -> Path to a folder withing the filesystem
-    /// \return Vector      -> A set of processed JSON (Article objects)
-    /// \description        -> Call "parse_json" on EACH JSON file within "folder"
-    std::vector<Article> parse_folder(const std::filesystem::directory_entry &folder);
-
 public:
     ///
     /// \param root_folder_path  -> Path the kaggle folder (data set folder)

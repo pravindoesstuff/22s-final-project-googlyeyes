@@ -15,12 +15,8 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     rapidjson::Document JSON_document;
     JSON_document.Parse(json_string.c_str());
 
-    //5- if "json_string" is invalid, throw exception
-//    if (!JSON_document.IsObject()) {
-//        throw std::exception();
-//    }
 
-    //6- Store "persons name" into Article
+    //5- Store "persons name" into Article
     Article article;
     auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
     auto &persons = entities["persons"]; //an array
@@ -31,7 +27,7 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         }
     }
 
-    //7- Store "organizations name" into Article
+    //6- Store "organizations name" into Article
     auto &organizations = entities["organizations"]; //an array
     if (!organizations.IsNull()) {
         for (const auto &organization: organizations.GetArray()) {
@@ -42,10 +38,10 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     auto &text = JSON_document["text"];
     article.text = text.GetString();
 
-    //8- Store text
+    //7- Store text
     article.text = JSON_document["text"].GetString();
 
-    //9- Tokenize, lowercase, and stemming
+    //8- Tokenize, lowercase, and stemming
     std::istringstream ss(JSON_document["text"].GetString());
     std::string token;
     while (std::getline(ss, token, ' ')) {
@@ -62,18 +58,6 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     }
 
     return article;
-}
-
-std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry &folder) {
-    std::vector<Article> articles;
-    for (const auto &entry: std::filesystem::directory_iterator(folder)) {
-        try {
-            articles.emplace_back(parse_json(entry));
-        } catch (std::exception &e) {
-            std::cerr << e.what() << '\n';
-        }
-    }
-    return articles;
 }
 
 std::vector<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
