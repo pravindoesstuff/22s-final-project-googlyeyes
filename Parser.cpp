@@ -15,12 +15,8 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     rapidjson::Document JSON_document;
     JSON_document.Parse(json_string.c_str());
 
-    //5- if "json_string" is invalid, throw exception
-    if (!JSON_document.IsObject()) {
-        throw std::exception();
-    }
 
-    //6- Store "persons name" into Article
+    //5- Store "persons name" into Article
     Article article;
     auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
     auto &persons = entities["persons"]; //an array
@@ -31,7 +27,7 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         }
     }
 
-    //7- Store "organizations name" into Article
+    //6- Store "organizations name" into Article
     auto &organizations = entities["organizations"]; //an array
     if (!organizations.IsNull()) {
         for (const auto &organization: organizations.GetArray()) {
@@ -39,16 +35,18 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             article.organizations.emplace_back(organization["name"].GetString());
         }
     }
+    auto &text = JSON_document["text"];
+    article.text = text.GetString();
 
-    //8- Store text
+    //7- Store text
     article.text = JSON_document["text"].GetString();
 
-    //9- Tokenize, lowercase, and stemming
-    std::istringstream ss (JSON_document["text"].GetString());
+    //8- Tokenize, lowercase, and stemming
+    std::istringstream ss(JSON_document["text"].GetString());
     std::string token;
-    while(std::getline(ss, token, ' ')){
+    while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
-        if(stop_words.find(token) != stop_words.end()) continue;
+        if (stop_words.find(token) != stop_words.end()) continue;
         //punctuation removal
         token.erase(std::remove_if(token.begin(), token.end(), ::ispunct), token.end());
         //lowering. I used std::transform to mutate "token" directly
@@ -62,39 +60,33 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     return article;
 }
 
-std::vector<Article> Parser::parse_folder(const std::filesystem::directory_entry &folder) {
+std::vector<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
     std::vector<Article> articles;
-    for (const auto &entry: std::filesystem::directory_iterator(folder)) {
-        try {
-            articles.emplace_back(parse_json(entry));
-        } catch (std::exception &e) {
-            std::cerr << e.what() << '\n';
+
+    auto data_dir = std::filesystem::directory_iterator(root_folder_path);
+    std::queue<std::future<Article>> future_queue;
+
+    //For EACH folder within data_dir
+    for (const auto &element: data_dir) {
+        if (element.is_directory()) {
+            // Stores articles from the recursive call
+            std::vector<Article> temp_articles = parse(element.path());
+            // Adds the articles into the current 'articles' vector
+            articles.insert(articles.begin(), temp_articles.begin(), temp_articles.end());
+        } else {
+            //1- Submit parse_json routine to pool and store the future
+            std::future<Article> future_article = thread_pool.Submit(parse_json, element);
+            //2- Add future object to queue.
+            future_queue.push(std::move(future_article));
         }
-    }
-    return articles;
-}
-
-std::vector<std::vector<Article>> Parser::parse(const std::string &kaggle_path) {
-    std::vector<std::vector<Article>> article_folders;
-
-    auto kaggle_data_dir = std::filesystem::directory_iterator(kaggle_path);
-    std::queue<std::future<std::vector<Article>>> future_queue;
-
-    //For EACH folder within kaggle_data_dir
-    for (const auto &year_dir: kaggle_data_dir) {
-        //1- asynchronously call "parse_folder" on each folder. NOTE: std::future will store "parse_folder" return value once available.
-        std::future<std::vector<Article>> future_article_vec = std::async(parse_folder, year_dir);
-
-        //2- Add future object to queue.
-        future_queue.push(std::move(future_article_vec));
     }
 
     //What happen here? Ask Pravin to help you understand.
     while (!future_queue.empty()) {
-        std::vector<Article> queued_articles = future_queue.front().get();
-        article_folders.emplace_back(queued_articles);
+        Article article = future_queue.front().get();
+        articles.emplace_back(article);
         future_queue.pop();
     }
 
-    return article_folders;
+    return articles;
 }

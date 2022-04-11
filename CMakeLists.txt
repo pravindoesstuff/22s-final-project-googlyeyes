@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(22s_final_proj)
+add_compile_options("-O3")
+add_compile_options("-march=native")
+add_compile_options("-flto=auto")
 
 set(CMAKE_CXX_STANDARD 17)
 
