@@ -35,14 +35,12 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             article.organizations.emplace_back(organization["name"].GetString());
         }
     }
-    auto &text = JSON_document["text"];
-    article.text = text.GetString();
 
     //7- Store text
     article.text = JSON_document["text"].GetString();
 
     //8- Tokenize, lowercase, and stemming
-    std::istringstream ss(JSON_document["text"].GetString());
+    std::istringstream ss(article.text);
     std::string token;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
