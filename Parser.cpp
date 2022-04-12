@@ -55,6 +55,12 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article.tokens.emplace_back(token);
     }
 
+    //9- Store ID
+    article.id = JSON_document["uuid"].GetString();
+
+    //10- Get Title
+    article.title = JSON_document["title"].GetString();
+
     return article;
 }
 
