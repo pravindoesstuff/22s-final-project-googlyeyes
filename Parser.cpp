@@ -35,14 +35,12 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             article.organizations.emplace_back(organization["name"].GetString());
         }
     }
-    auto &text = JSON_document["text"];
-    article.text = text.GetString();
 
     //7- Store text
     article.text = JSON_document["text"].GetString();
 
     //8- Tokenize, lowercase, and stemming
-    std::istringstream ss(JSON_document["text"].GetString());
+    std::istringstream ss(article.text);
     std::string token;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
@@ -57,20 +55,25 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article.tokens.emplace_back(token);
     }
 
+    //9- Store ID
+    article.id = JSON_document["uuid"].GetString();
+
+    //10- Get Title
+    article.title = JSON_document["title"].GetString();
+
     return article;
 }
 
-std::vector<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
-    std::vector<Article> articles;
-
+std::deque<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
     auto data_dir = std::filesystem::directory_iterator(root_folder_path);
+    std::deque<Article> articles;
     std::queue<std::future<Article>> future_queue;
 
     //For EACH folder within data_dir
     for (const auto &element: data_dir) {
         if (element.is_directory()) {
             // Stores articles from the recursive call
-            std::vector<Article> temp_articles = parse(element.path());
+            std::deque<Article> temp_articles = parse(element.path());
             // Adds the articles into the current 'articles' vector
             articles.insert(articles.begin(), temp_articles.begin(), temp_articles.end());
         } else {
