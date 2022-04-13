@@ -64,17 +64,16 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     return article;
 }
 
-std::vector<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
-    std::vector<Article> articles;
-
+std::deque<Article> Parser::parse(const std::filesystem::path &root_folder_path) {
     auto data_dir = std::filesystem::directory_iterator(root_folder_path);
+    std::deque<Article> articles;
     std::queue<std::future<Article>> future_queue;
 
     //For EACH folder within data_dir
     for (const auto &element: data_dir) {
         if (element.is_directory()) {
             // Stores articles from the recursive call
-            std::vector<Article> temp_articles = parse(element.path());
+            std::deque<Article> temp_articles = parse(element.path());
             // Adds the articles into the current 'articles' vector
             articles.insert(articles.begin(), temp_articles.begin(), temp_articles.end());
         } else {

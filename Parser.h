@@ -5,7 +5,7 @@
  * @description:    This class is the parser of the project
  *                  It is responsible for:
  *                      - reading and processing JSON files asynchronously
- *                      - Storing processed JSON file (Article) into std::vector
+ *                      - Storing processed JSON file (Article) into std::deque
  */
 
 #ifndef INC_22S_FINAL_PROJ_PARSER_H
@@ -17,8 +17,7 @@
 #include <thread>
 
 #include <future>
-#include <queue>
-#include <vector>
+#include <deque>
 #include <exception>
 #include <string>
 #include <sstream>
@@ -179,11 +178,11 @@ private:
 
 public:
     ///
-    /// \param root_folder_path  -> Path the kaggle folder (data set folder)
-    /// \return void        -> N.A.
-    /// \description        -> asynchronously call "parse_folder" on EACH folder within
-    ///                     "root_folder_path"
-    std::vector<Article> parse(const std::filesystem::path &root_folder_path);
+    /// \param root_folder_path            -> Path the kaggle folder (data set folder)
+    /// \return std::deque<Article>        -> N.A.
+    /// \description                       -> asynchronously call "parse_folder" on EACH folder within
+    ///                                     "root_folder_path"
+    std::deque<Article> parse(const std::filesystem::path &root_folder_path);
 };
 
 
