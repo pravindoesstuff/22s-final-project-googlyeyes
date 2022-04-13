@@ -17,7 +17,7 @@
 #include <thread>
 
 #include <future>
-#include <deque>
+#include <vector>
 #include <exception>
 #include <string>
 #include <sstream>
@@ -168,6 +168,8 @@ static std::unordered_set<std::string> stop_words = {
 class Parser {
 
 private:
+    /// \description Parser::parse will move futures into this object, where they can be read later by wait()
+    std::vector<std::future<Article>> future_queue;
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
@@ -177,12 +179,19 @@ private:
     static Article parse_json(const std::filesystem::directory_entry &json_file);
 
 public:
+    /// \description Parser::wait will move articles from future_queue into this object, where they can be read directly
+    std::vector<Article> articles;
+
     ///
     /// \param root_folder_path            -> Path the kaggle folder (data set folder)
-    /// \return std::deque<Article>        -> N.A.
     /// \description                       -> asynchronously call "parse_folder" on EACH folder within
-    ///                                     "root_folder_path"
-    std::deque<Article> parse(const std::filesystem::path &root_folder_path);
+    ///                                     "root_folder_path" and store "Future" variables within the Parser::future_queue
+    void parse(const std::filesystem::path &root_folder_path);
+
+    /// \description                       -> "Move all variables from Parser::future_queue into the Parser::articles,
+    ///                                     where they can be accessed. Optimally, this should only be called once and
+    ///                                     should be called before accessing Parser::articles
+    void wait();
 };
 
 
