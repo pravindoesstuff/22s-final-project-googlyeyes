@@ -76,7 +76,7 @@ std::deque<Article> Parser::parse(const std::filesystem::path &root_folder_path)
             std::deque<Article> temp_articles = parse(element.path());
             // Adds the articles into the current 'articles' vector
             articles.insert(articles.begin(), temp_articles.begin(), temp_articles.end());
-        } else {
+        } else if (element.path().extension() == ".json") {
             //1- Submit parse_json routine to pool and store the future
             std::future<Article> future_article = thread_pool.Submit(parse_json, element);
             //2- Add future object to queue.
