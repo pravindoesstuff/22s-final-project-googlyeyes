@@ -11,8 +11,6 @@
 #include <vector>
 #include <string>
 
-using std::vector;
-using std::string;
 
 class Query {
     vector<string> and_keywords, or_keywords, not_words, organizations, persons;
