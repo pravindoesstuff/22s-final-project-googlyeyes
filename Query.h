@@ -13,9 +13,9 @@
 
 
 class Query {
-    vector<string> and_keywords, or_keywords, not_words, organizations, persons;
+    std::vector<std::string> and_keywords, or_keywords, not_words, organizations, persons;
 
-    explicit Query(const string& query);
+    explicit Query(const std::string& query);
 };
 
 
