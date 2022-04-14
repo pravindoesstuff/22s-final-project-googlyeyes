@@ -165,4 +165,14 @@ void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
 }
 
 
+template<typename T>
+void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
+    AvlNode *beta = alpha->right;
+    alpha->right = beta->left;
+    beta->left = alpha;
+    alpha->height = max(height(alpha->left), height(alpha->right) ) + 1;
+    beta->height = max(height(beta->right), alpha->height ) + 1;
+    alpha = beta;
+}
+
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
