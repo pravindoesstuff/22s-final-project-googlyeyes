@@ -35,14 +35,14 @@ private:
     /// \description    -> Empties AVL tree
     void make_empty();
 
-    /// \param k2     -> Node of imbalance
+    /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
-    void rotate_with_left_child(AvlNode *&k2);
+    void rotate_with_left_child(AvlNode *&alpha);
 
 
     /// \param k2     -> Node of imbalance
     /// \description    -> Performs "case 2" rotation
-    void double_with_left_child(AvlNode *&k2);
+    void double_with_left_child(AvlNode *&alpha);
 
     /// \param node     -> Node of imbalance
     /// \description    -> Performs "case 3" rotation
@@ -138,19 +138,19 @@ void AvlTree<T>::balance(AvlTree::AvlNode *&node) {
 }
 
 template<typename T>
-void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&k2) {
-    AvlNode *k1 = k2->left;
-    k2->left = k1->right;
-    k1->right = k2;
-    k2->height = max(height(k2->left), height(k2->right)) + 1;
-    k1->height = max(height(k1->left), k2->height) + 1;
-    k2 = k1;
+void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
+    AvlNode *beta = alpha->left;
+    alpha->left = beta->right;
+    beta->right = alpha;
+    alpha->height = max(height(alpha->left), height(alpha->right)) + 1;
+    beta->height = max(height(beta->left), alpha->height) + 1;
+    alpha = beta;
 }
 
 template<typename T>
-void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&k3) {
-    rotateWithRightChild(k3->left);
-    rotateWithLeftChild(k3);
+void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
+    rotateWithRightChild(alpha->left);
+    rotateWithLeftChild(alpha);
 }
 
 
