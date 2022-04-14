@@ -40,11 +40,32 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     std::string token;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
-        if (stop_words.find(token) != stop_words.end()) continue;
+        if (stop_words.find(token) != stop_words.end()) {
+            continue;
+        }
         //punctuation removal
-        token.erase(std::remove_if(token.begin(), token.end(), ::ispunct), token.end());
-        //lowering. I used std::transform to mutate "token" directly
-        std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+        char *token_ptr = token.data();
+
+        // Remove all characters that are not alphabetic from token
+        for (const char c: token) {
+            if (isalpha(c)) {
+                *token_ptr++ = c;
+            }
+        }
+
+        // If the token_ptr hasn't changed, then no alphabetic characters were found, so we skip this token
+        if (token.c_str() == token_ptr) {
+            continue;
+        }
+
+        // Truncate punctuation that may appear at the end of the character
+        token.resize(token_ptr - token.c_str());
+
+        // Convert all alphabetic characters to lowercase
+        for (char &c: token) {
+            c = (char) tolower(c);
+        }
+
         //stem token
         Porter2Stemmer::stem(token);
         //add token to list of tokens in the article.
