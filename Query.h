@@ -1,6 +1,9 @@
-//
-// Created by pravin on 4/6/22.
-//
+/**
+ * @Author(s):      Pravin and Kassi
+ * @filename:       Query.h
+ * @date:           04-06-2022
+ * @description:    Implementation of our boolean query processor
+ */
 
 #ifndef INC_22S_FINAL_PROJ_QUERY_H
 #define INC_22S_FINAL_PROJ_QUERY_H
