@@ -33,7 +33,7 @@ private:
     T *search_node(const T &value, AvlNode *&node);
 
     /// \description    -> Empties AVL tree
-    void make_empty();
+    void make_empty(AvlNode *&node);
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -58,8 +58,8 @@ private:
     void balance(AvlNode *&node);
 
     /// \description    -> Returns max between integers
-    int max (int a, int b) const{
-        return a > b? a : b;
+    int max(int a, int b) const {
+        return a > b ? a : b;
     }
 
     //AVL tree root node
@@ -154,14 +154,14 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
 
 template<typename T>
 void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_right_child( alpha->left );
-    rotate_with_left_child( alpha );
+    rotate_with_right_child(alpha->left);
+    rotate_with_left_child(alpha);
 }
 
 template<typename T>
 void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_left_child( alpha->right );
-    rotate_with_right_child( alpha );
+    rotate_with_left_child(alpha->right);
+    rotate_with_right_child(alpha);
 }
 
 
@@ -170,9 +170,18 @@ void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->right;
     alpha->right = beta->left;
     beta->left = alpha;
-    alpha->height = max(height(alpha->left), height(alpha->right) ) + 1;
-    beta->height = max(height(beta->right), alpha->height ) + 1;
+    alpha->height = max(height(alpha->left), height(alpha->right)) + 1;
+    beta->height = max(height(beta->right), alpha->height) + 1;
     alpha = beta;
+}
+
+template<typename T>
+void AvlTree<T>::make_empty(AvlNode *&node) {
+    if (node != nullptr) {
+        make_empty(node->left);
+        make_empty(node->right);
+        delete node;
+    }
 }
 
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
