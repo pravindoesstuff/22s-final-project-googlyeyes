@@ -70,7 +70,7 @@ public:
     AvlTree(const AvlTree<T> &tree);
 
     ~AvlTree() {
-        make_empty();
+        make_empty( root );
     }
 
     /// \param value    -> Value to be added to AVL tree
