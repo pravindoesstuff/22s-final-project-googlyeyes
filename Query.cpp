@@ -1,11 +1,4 @@
-//
-// Created by pravin on 4/6/22.
-//
-
 #include "Query.h"
-#include <sstream>
-
-using std::stringstream;
 
 enum Tokenizer {
     AND,
@@ -15,9 +8,9 @@ enum Tokenizer {
     PERSON,
 };
 
-Query::Query(const string &query) {
-    stringstream qstream(query);
-    string token;
+Query::Query(const std::string &query) {
+    std::stringstream qstream(query);
+    std::string token;
     Tokenizer current_tokenizer = OR;
     while (qstream >> token) {
         if (token == "AND") current_tokenizer = AND;

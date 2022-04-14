@@ -8,6 +8,8 @@
 #ifndef INC_22S_FINAL_PROJ_AVLTREE_H
 #define INC_22S_FINAL_PROJ_AVLTREE_H
 
+#include <algorithm>
+
 template<typename T>
 class AvlTree {
 private:
@@ -32,8 +34,9 @@ private:
     /// \description    -> Search node in the AVL tree
     T *search_node(const T &value, AvlNode *&node);
 
-    /// \description    -> Empties AVL tree
-    void make_empty(AvlNode *&node);
+    /// \param node     -> A node in the AVL tree
+    /// \description    -> Internal function responsible for emptying a node subtrees
+    void make_empty(AvlNode *& node);
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -57,11 +60,6 @@ private:
     /// \description    -> balances AVL tree
     void balance(AvlNode *&node);
 
-    /// \description    -> Returns max between integers
-    int max(int a, int b) const {
-        return a > b ? a : b;
-    }
-
     //AVL tree root node
     AvlNode *root;
 public:
@@ -72,7 +70,7 @@ public:
     AvlTree(const AvlTree<T> &tree);
 
     ~AvlTree() {
-        make_empty();
+        make_empty( root );
     }
 
     /// \param value    -> Value to be added to AVL tree
@@ -88,6 +86,16 @@ public:
         return search_node(value, root);
     }
 };
+
+template<typename T>
+void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
+    if(node != nullptr){
+        make_empty( node->left );
+        make_empty( node->right );
+        delete node;
+    }
+    node = nullptr;
+}
 
 //insert_node implementation
 template<typename T>
@@ -139,7 +147,7 @@ void AvlTree<T>::balance(AvlTree::AvlNode *&node) {
             }
         }
     }
-    node->height = max(height(node->left), height(node->right)) + 1;
+    node->height = std::max(height(node->left), height(node->right)) + 1;
 }
 
 template<typename T>
@@ -147,21 +155,21 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->left;
     alpha->left = beta->right;
     beta->right = alpha;
-    alpha->height = max(height(alpha->left), height(alpha->right)) + 1;
-    beta->height = max(height(beta->left), alpha->height) + 1;
+    alpha->height = std::max(height(alpha->left), height(alpha->right)) + 1;
+    beta->height = std::max(height(beta->left), alpha->height) + 1;
     alpha = beta;
 }
 
 template<typename T>
 void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_right_child(alpha->left);
-    rotate_with_left_child(alpha);
+    rotate_with_right_child( alpha->left );
+    rotate_with_left_child( alpha );
 }
 
 template<typename T>
 void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_left_child(alpha->right);
-    rotate_with_right_child(alpha);
+    rotate_with_left_child( alpha->right );
+    rotate_with_right_child( alpha );
 }
 
 
@@ -170,18 +178,9 @@ void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->right;
     alpha->right = beta->left;
     beta->left = alpha;
-    alpha->height = max(height(alpha->left), height(alpha->right)) + 1;
-    beta->height = max(height(beta->right), alpha->height) + 1;
+    alpha->height = std::max(height(alpha->left), height(alpha->right) ) + 1;
+    beta->height = std::max(height(beta->right), alpha->height ) + 1;
     alpha = beta;
-}
-
-template<typename T>
-void AvlTree<T>::make_empty(AvlNode *&node) {
-    if (node != nullptr) {
-        make_empty(node->left);
-        make_empty(node->right);
-        delete node;
-    }
 }
 
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H

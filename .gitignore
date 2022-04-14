@@ -2,5 +2,5 @@ test/
 data/
 cmake-build-debug/
 cmake-build-release/
-assets/kaggle/*
+assets/
 .idea/
