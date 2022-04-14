@@ -99,11 +99,22 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
  * accessed here anyways
  */
 
-void Parser::wait() {
-    // Avoid needless reallocation by reserving capacity beforehand
-    articles.reserve(articles.size() + future_queue.size());
-    for (std::future<Article> &article: future_queue) {
-        articles.push_back(article.get());
+AvlTree<Pair> Parser::wait() {
+    AvlTree<Pair> article_tree;
+
+    for (std::future<Article> &future_article: future_queue) {
+        // Get the article from the article_future
+        // And move it to the heap
+        Article *article = new Article(future_article.get());
+        // Go through the tokens of the article
+        for (const std::string &token: article->tokens) {
+            // Try to get the pair from the tree?
+            Pair lookup_pair(token);
+            //Pair *pair = article_tree.search(lookup_pair);
+            // If the pair is null, add a new one with token into the tree
+            article_tree.insert(lookup_pair);
+        }
     }
     future_queue.clear();
+    return article_tree;
 }

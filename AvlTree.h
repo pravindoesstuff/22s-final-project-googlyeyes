@@ -36,7 +36,7 @@ private:
 
     /// \param node     -> A node in the AVL tree
     /// \description    -> Internal function responsible for emptying a node subtrees
-    void make_empty(AvlNode *& node);
+    void make_empty(AvlNode *&node);
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -70,7 +70,7 @@ public:
     AvlTree(const AvlTree<T> &tree);
 
     ~AvlTree() {
-        make_empty( root );
+        make_empty(root);
     }
 
     /// \param value    -> Value to be added to AVL tree
@@ -89,9 +89,9 @@ public:
 
 template<typename T>
 void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
-    if(node != nullptr){
-        make_empty( node->left );
-        make_empty( node->right );
+    if (node != nullptr) {
+        make_empty(node->left);
+        make_empty(node->right);
         delete node;
     }
     node = nullptr;
@@ -106,7 +106,9 @@ void AvlTree<T>::insert_node(const T &value, AvlNode *&node) {
         insert_node(value, node->left);
     } else if (node->value < value) {
         insert_node(value, node->right);
-    } else;
+    } else {
+        node->value += value;
+    }
     balance(node);
 }
 
@@ -117,7 +119,7 @@ T *AvlTree<T>::search_node(const T &value, AvlTree::AvlNode *&node) {
         return search_node(value, node->right);
     } else if (value < node->value) {
         return search_node(value, node->left);
-    } else return node->value;
+    } else return &node->value;
 }
 
 template<typename T>
@@ -162,14 +164,14 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
 
 template<typename T>
 void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_right_child( alpha->left );
-    rotate_with_left_child( alpha );
+    rotate_with_right_child(alpha->left);
+    rotate_with_left_child(alpha);
 }
 
 template<typename T>
 void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
-    rotate_with_left_child( alpha->right );
-    rotate_with_right_child( alpha );
+    rotate_with_left_child(alpha->right);
+    rotate_with_right_child(alpha);
 }
 
 
@@ -178,8 +180,8 @@ void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->right;
     alpha->right = beta->left;
     beta->left = alpha;
-    alpha->height = std::max(height(alpha->left), height(alpha->right) ) + 1;
-    beta->height = std::max(height(beta->right), alpha->height ) + 1;
+    alpha->height = std::max(height(alpha->left), height(alpha->right)) + 1;
+    beta->height = std::max(height(beta->right), alpha->height) + 1;
     alpha = beta;
 }
 
