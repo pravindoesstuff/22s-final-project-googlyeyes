@@ -34,8 +34,9 @@ private:
     /// \description    -> Search node in the AVL tree
     T *search_node(const T &value, AvlNode *&node);
 
-    /// \description    -> Empties AVL tree
-    void make_empty();
+    /// \param node     -> A node in the AVL tree
+    /// \description    -> Internal function responsible for emptying a node subtrees
+    void make_empty(AvlNode *& node);
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -69,7 +70,7 @@ public:
     AvlTree(const AvlTree<T> &tree);
 
     ~AvlTree() {
-        make_empty();
+        make_empty( root );
     }
 
     /// \param value    -> Value to be added to AVL tree
@@ -85,6 +86,16 @@ public:
         return search_node(value, root);
     }
 };
+
+template<typename T>
+void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
+    if(node != nullptr){
+        make_empty( node->left );
+        make_empty( node->right );
+        delete node;
+    }
+    node = nullptr;
+}
 
 //insert_node implementation
 template<typename T>
