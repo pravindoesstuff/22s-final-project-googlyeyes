@@ -154,8 +154,6 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
 
 template<typename T>
 void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
-    rotateWithRightChild(alpha->left);
-    rotateWithLeftChild(alpha);
 }
 
 template<typename T>
