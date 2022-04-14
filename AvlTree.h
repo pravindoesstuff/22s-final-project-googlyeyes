@@ -57,6 +57,11 @@ private:
     /// \description    -> balances AVL tree
     void balance(AvlNode *&node);
 
+    /// \description    -> Returns max between integers
+    int max (int a, int b) const{
+        return a > b? a : b;
+    }
+
     //AVL tree root node
     AvlNode *root;
 public:
