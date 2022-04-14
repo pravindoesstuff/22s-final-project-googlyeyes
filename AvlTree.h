@@ -23,7 +23,7 @@ private:
         explicit AvlNode(const T &value) : value(value), left(nullptr), right(nullptr), height(0) {}
     };
 
-    /// \description    -> If the node ptr is non-null, return the node's height. If the node is a nullptr return -1
+    /// \description    -> Return the node's height.
     int height(AvlNode *&node) { return node != nullptr ? node->height : -1; }
 
     /// \description    -> Inserts a new node into the AVL tree
@@ -40,17 +40,17 @@ private:
     void rotate_with_left_child(AvlNode *&alpha);
 
 
-    /// \param k2     -> Node of imbalance
+    /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 2" rotation
     void double_with_left_child(AvlNode *&alpha);
 
-    /// \param node     -> Node of imbalance
+    /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 3" rotation
-    void double_with_right_child(AvlNode *&node);
+    void double_with_right_child(AvlNode *&alpha);
 
     /// \param node     -> Node of imbalance
     /// \description    -> Performs "case 4" rotation
-    void rotate_with_right_child(AvlNode *&node);
+    void rotate_with_right_child(AvlNode *&alpha);
 
 
     /// \param  node    -> Node of imbalance
@@ -151,6 +151,12 @@ template<typename T>
 void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
     rotateWithRightChild(alpha->left);
     rotateWithLeftChild(alpha);
+}
+
+template<typename T>
+void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
+    rotate_with_left_child( alpha->right );
+    rotate_with_right_child( alpha );
 }
 
 
