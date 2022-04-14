@@ -87,6 +87,16 @@ public:
     }
 };
 
+template<typename T>
+void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
+    if(node != nullptr){
+        make_empty( node->left );
+        make_empty( node->right );
+        delete node;
+    }
+    node = nullptr;
+}
+
 //insert_node implementation
 template<typename T>
 void AvlTree<T>::insert_node(const T &value, AvlNode *&node) {
