@@ -96,5 +96,12 @@ void AvlTree<T>::insert_node(const T &value, AvlNode *&node) {
     balance(node);
 }
 
+//double_with_right_child implementation
+template<typename T>
+void AvlTree<T>::double_with_right_child(AvlNode *&node) {
+    rotate_with_left_child( node->right );
+    rotate_with_right_child( node );
+}
+
 
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
