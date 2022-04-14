@@ -6,6 +6,11 @@ if (CMAKE_BUILD_TYPE MATCHES release)
     add_compile_options("-flto")
 endif ()
 
+if (CMAKE_BUILD_TYPE MATCHES debug)
+    add_compile_options("-wall")
+    add_compile_options("-fanalyzer")
+endif ()
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS -pthread)
