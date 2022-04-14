@@ -8,6 +8,8 @@
 #ifndef INC_22S_FINAL_PROJ_AVLTREE_H
 #define INC_22S_FINAL_PROJ_AVLTREE_H
 
+#include <algorithm>
+
 template<typename T>
 class AvlTree {
 private:
@@ -56,11 +58,6 @@ private:
     /// \param  node    -> Node of imbalance
     /// \description    -> balances AVL tree
     void balance(AvlNode *&node);
-
-    /// \description    -> Returns max between integers
-    int max (int a, int b) const{
-        return a > b? a : b;
-    }
 
     //AVL tree root node
     AvlNode *root;
@@ -139,7 +136,7 @@ void AvlTree<T>::balance(AvlTree::AvlNode *&node) {
             }
         }
     }
-    node->height = max(height(node->left), height(node->right)) + 1;
+    node->height = std::max(height(node->left), height(node->right)) + 1;
 }
 
 template<typename T>
@@ -147,8 +144,8 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->left;
     alpha->left = beta->right;
     beta->right = alpha;
-    alpha->height = max(height(alpha->left), height(alpha->right)) + 1;
-    beta->height = max(height(beta->left), alpha->height) + 1;
+    alpha->height = std::max(height(alpha->left), height(alpha->right)) + 1;
+    beta->height = std::max(height(beta->left), alpha->height) + 1;
     alpha = beta;
 }
 
@@ -170,8 +167,8 @@ void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->right;
     alpha->right = beta->left;
     beta->left = alpha;
-    alpha->height = max(height(alpha->left), height(alpha->right) ) + 1;
-    beta->height = max(height(beta->right), alpha->height ) + 1;
+    alpha->height = std::max(height(alpha->left), height(alpha->right) ) + 1;
+    beta->height = std::max(height(beta->right), alpha->height ) + 1;
     alpha = beta;
 }
 
