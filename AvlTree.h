@@ -8,6 +8,8 @@
 #ifndef INC_22S_FINAL_PROJ_AVLTREE_H
 #define INC_22S_FINAL_PROJ_AVLTREE_H
 
+#include <algorithm>
+
 template<typename T>
 class AvlTree {
 private:
