@@ -34,8 +34,9 @@ private:
     /// \description    -> Search node in the AVL tree
     T *search_node(const T &value, AvlNode *&node);
 
-    /// \description    -> Empties AVL tree
-    void make_empty();
+    /// \param node     -> A node in the AVL tree
+    /// \description    -> Internal function responsible for emptying a node subtrees
+    void make_empty(AvlNode *& node);
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
