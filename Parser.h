@@ -28,6 +28,8 @@
 #include "rapidjson/document.h"
 #include "thread_pool.h"
 #include "porter2_stemmer.h"
+#include "AvlTree.h"
+#include "Pair.h"
 
 //stop word list borrowed from: https://www.webconfs.com/stop-words.php
 static std::unordered_set<std::string> stop_words = {
@@ -191,7 +193,7 @@ public:
     /// \description                       -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                                     where they can be accessed. Optimally, this should only be called once and
     ///                                     should be called before accessing Parser::articles
-    void wait();
+    AvlTree<Pair> wait();
 };
 
 

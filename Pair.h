@@ -6,20 +6,24 @@
 #define INC_22S_FINAL_PROJ_PAIR_H
 
 
-template<typename K, typename V>
-class Pair {
-    K key;
-    V value;
+struct Pair {
+    std::string token;
+    std::vector<Article*> articles;
 
-    Pair(const K &key, const V &value) {
-        this->key = key;
-        this->value = value;
+    bool operator<(const Pair &pair) const { return this->token < pair.token; }
+
+    bool operator==(const Pair &pair) const { return this->token == pair.token; }
+
+    void operator+=(const Pair &pair) {
+        articles.insert(articles.begin(), pair.articles.begin(), pair.articles.end());
     }
 
-    bool operator<(const K &key) { return this->key < key; }
+    Pair(const std::string &key) { this->token = key; }
 
-public:
-    Pair(const K &key) { this->key = key; }
+    Pair(const std::string &token, const std::vector<Article*> &articles) {
+        this->token = token;
+        this->articles = articles;
+    }
 };
 
 
