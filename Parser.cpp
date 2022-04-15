@@ -99,8 +99,8 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
  * accessed here anyways
  */
 
-AvlTree<Pair> Parser::wait() {
-    AvlTree<Pair> article_tree;
+AvlTree<std::string, Article*> Parser::build_AVL_tree() {
+    AvlTree<std::string, Article*> article_tree;
 
     for (std::future<Article> &future_article: future_queue) {
         // Get the article from the article_future
@@ -109,10 +109,9 @@ AvlTree<Pair> Parser::wait() {
         // Go through the tokens of the article
         for (const std::string &token: article->tokens) {
             // Try to get the pair from the tree?
-            Pair lookup_pair(token);
             //Pair *pair = article_tree.search(lookup_pair);
             // If the pair is null, add a new one with token into the tree
-            article_tree.insert(lookup_pair);
+            article_tree.insert(token, article);
         }
     }
     future_queue.clear();

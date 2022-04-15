@@ -18,5 +18,6 @@ struct Article {
     std::vector<std::string> persons;
     std::vector<std::string> organizations;
     std::vector<std::string> tokens;
+    friend std::ostream &operator<<(std::ostream &os, const Article &article) { return os << article.id; }
 };
 #endif //INC_22S_FINAL_PROJ_ARTICLE_H
