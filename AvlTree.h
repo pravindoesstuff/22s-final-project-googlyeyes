@@ -10,29 +10,33 @@
 
 #include <algorithm>
 
-template<typename T>
+template<typename K, typename V>
 class AvlTree {
 private:
 
     //AvlNode class declaration
     class AvlNode {
     public:
-        T value;
+        K key;
+        std::vector<V> values;
         AvlNode *left;
         AvlNode *right;
         int height;
 
-        explicit AvlNode(const T &value) : value(value), left(nullptr), right(nullptr), height(0) {}
+        explicit AvlNode(const K &key, const V &value) : key(key), left(nullptr), right(nullptr),
+                                                         height(0) {
+            values.emplace_back(value);
+        }
     };
 
     /// \description    -> Return the node's height.
     int height(AvlNode *&node) { return node != nullptr ? node->height : -1; }
 
     /// \description    -> Inserts a new node into the AVL tree
-    void insert_node(const T &value, AvlNode *&node);
+    void insert_node(const K &key, const V &value, AvlNode *&node);
 
     /// \description    -> Search node in the AVL tree
-    T *search_node(const T &value, AvlNode *&node);
+    std::vector<V> *search_node(const K &key, AvlNode *&node);
 
     /// \param node     -> A node in the AVL tree
     /// \description    -> Internal function responsible for emptying a node subtrees
@@ -67,7 +71,7 @@ public:
     //constructors
     AvlTree() : root(nullptr) {}
 
-    AvlTree(const AvlTree<T> &tree);
+    AvlTree(const AvlTree<K, V> &tree);
 
     ~AvlTree() {
         make_empty(root);
@@ -75,20 +79,20 @@ public:
 
     /// \param value    -> Value to be added to AVL tree
     /// \description    -> Insert a new node into the AVL tree
-    void insert(const T &value) {
-        insert_node(value, root);
+    void insert(const K &key, const V &value) {
+        insert_node(key, value, root);
     }
 
     /// \param value    -> Element to find
     /// \return T*      -> Pointer to value or NULL
     /// \description    -> Search
-    T *search(const T &value) {
-        return search_node(value, root);
+    std::vector<V> *search(const K &key) {
+        return search_node(key, root);
     }
 };
 
-template<typename T>
-void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
+template<typename K, typename V>
+void AvlTree<K, V>::make_empty(AvlTree::AvlNode *&node) {
     if (node != nullptr) {
         make_empty(node->left);
         make_empty(node->right);
@@ -98,32 +102,32 @@ void AvlTree<T>::make_empty(AvlTree::AvlNode *&node) {
 }
 
 //insert_node implementation
-template<typename T>
-void AvlTree<T>::insert_node(const T &value, AvlNode *&node) {
+template<typename K, typename V>
+void AvlTree<K, V>::insert_node(const K &key, const V &value, AvlNode *&node) {
     if (node == nullptr) {
-        node = new AvlNode(value);
-    } else if (value < node->value) {
-        insert_node(value, node->left);
-    } else if (node->value < value) {
-        insert_node(value, node->right);
+        node = new AvlNode(key, value);
+    } else if (key < node->key) {
+        insert_node(key, value, node->left);
+    } else if (node->key < key) {
+        insert_node(key, value, node->right);
     } else {
-        node->value += value;
+        node->values.emplace_back(value);
     }
     balance(node);
 }
 
-template<typename T>
-T *AvlTree<T>::search_node(const T &value, AvlTree::AvlNode *&node) {
+template<typename K, typename V>
+std::vector<V> *AvlTree<K, V>::search_node(const K &key, AvlTree::AvlNode *&node) {
     if (node == nullptr) return nullptr;
-    if (node->value < value) {
-        return search_node(value, node->right);
-    } else if (value < node->value) {
-        return search_node(value, node->left);
-    } else return &node->value;
+    if (node->key < key) {
+        return search_node(key, node->right);
+    } else if (key < node->key) {
+        return search_node(key, node->left);
+    } else return &node->values;
 }
 
-template<typename T>
-void AvlTree<T>::balance(AvlTree::AvlNode *&node) {
+template<typename K, typename V>
+void AvlTree<K, V>::balance(AvlTree::AvlNode *&node) {
     if (node == nullptr) {
         return;
     }
@@ -152,8 +156,8 @@ void AvlTree<T>::balance(AvlTree::AvlNode *&node) {
     node->height = std::max(height(node->left), height(node->right)) + 1;
 }
 
-template<typename T>
-void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
+template<typename K, typename V>
+void AvlTree<K, V>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->left;
     alpha->left = beta->right;
     beta->right = alpha;
@@ -162,21 +166,21 @@ void AvlTree<T>::rotate_with_left_child(AvlTree::AvlNode *&alpha) {
     alpha = beta;
 }
 
-template<typename T>
-void AvlTree<T>::double_with_left_child(AvlTree::AvlNode *&alpha) {
+template<typename K, typename V>
+void AvlTree<K, V>::double_with_left_child(AvlTree::AvlNode *&alpha) {
     rotate_with_right_child(alpha->left);
     rotate_with_left_child(alpha);
 }
 
-template<typename T>
-void AvlTree<T>::double_with_right_child(AvlTree::AvlNode *&alpha) {
+template<typename K, typename V>
+void AvlTree<K, V>::double_with_right_child(AvlTree::AvlNode *&alpha) {
     rotate_with_left_child(alpha->right);
     rotate_with_right_child(alpha);
 }
 
 
-template<typename T>
-void AvlTree<T>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
+template<typename K, typename V>
+void AvlTree<K, V>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     AvlNode *beta = alpha->right;
     alpha->right = beta->left;
     beta->left = alpha;

@@ -9880,7 +9880,7 @@ namespace Catch {
                 ["--libidentify"]
                 ( "report name and version according to libidentify standard" )
             | Opt( setWaitForKeypress, "never|start|exit|both" )
-                ["--wait-for-keypress"]
+                ["--build_AVL_tree-for-keypress"]
                 ( "waits for a keypress before exiting" )
             | Opt( config.benchmarkSamples, "samples" )
                 ["--benchmark-samples"]
@@ -12630,18 +12630,18 @@ namespace Catch {
             void close() override {
                 TrackerBase::close();
                 // If a generator has a child (it is followed by a section)
-                // and none of its children have started, then we must wait
+                // and none of its children have started, then we must build_AVL_tree
                 // until later to start consuming its values.
                 // This catches cases where `GENERATE` is placed between two
                 // `SECTION`s.
                 // **The check for m_children.empty cannot be removed**.
                 // doing so would break `GENERATE` _not_ followed by `SECTION`s.
                 const bool should_wait_for_child = [&]() {
-                    // No children -> nobody to wait for
+                    // No children -> nobody to build_AVL_tree for
                     if ( m_children.empty() ) {
                         return false;
                     }
-                    // If at least one child started executing, don't wait
+                    // If at least one child started executing, don't build_AVL_tree
                     if ( std::find_if(
                              m_children.begin(),
                              m_children.end(),
@@ -12652,8 +12652,8 @@ namespace Catch {
                     }
 
                     // No children have started. We need to check if they _can_
-                    // start, and thus we should wait for them, or they cannot
-                    // start (due to filters), and we shouldn't wait for them
+                    // start, and thus we should build_AVL_tree for them, or they cannot
+                    // start (due to filters), and we shouldn't build_AVL_tree for them
                     auto* parent = m_parent;
                     // This is safe: there is always at least one section
                     // tracker in a test case tracking tree

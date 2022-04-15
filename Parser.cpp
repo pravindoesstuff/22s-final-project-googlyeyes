@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
+Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 
     //1- Open stream to file
     std::ifstream file(json_file.path());
@@ -17,26 +17,26 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 
 
     //5- Store "persons name" into Article
-    Article article;
+    Article *article = new Article();
     auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
     auto &persons = entities["persons"]; //an array
     for (const auto &person: persons.GetArray()) {
         //add person names to article vector named "persons"
-        article.persons.emplace_back(person["name"].GetString());
+        article->persons.emplace_back(person["name"].GetString());
     }
 
     //6- Store "organizations name" into Article
     auto &organizations = entities["organizations"]; //an array
     for (const auto &organization: organizations.GetArray()) {
         //add organization names to article vector named "organizations"
-        article.organizations.emplace_back(organization["name"].GetString());
+        article->organizations.emplace_back(organization["name"].GetString());
     }
 
     //7- Store text
-    article.text = JSON_document["text"].GetString();
+    article->text = JSON_document["text"].GetString();
 
     //8- Tokenize, lowercase, and stemming
-    std::istringstream ss(article.text);
+    std::istringstream ss(article->text);
     std::string token;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
@@ -69,14 +69,14 @@ Article Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         //stem token
         Porter2Stemmer::stem(token);
         //add token to list of tokens in the article.
-        article.tokens.emplace_back(token);
+        article->tokens.emplace_back(token);
     }
 
     //9- Store ID
-    article.id = JSON_document["uuid"].GetString();
+    article->id = JSON_document["uuid"].GetString();
 
     //10- Get Title
-    article.title = JSON_document["title"].GetString();
+    article->title = JSON_document["title"].GetString();
 
     return article;
 }
@@ -99,17 +99,20 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
  * accessed here anyways
  */
 
-AvlTree<Pair> Parser::build_AVL_tree() {
-    AvlTree<Pair> article_tree;
+AvlTree<std::string, Article *> Parser::build_AVL_tree() {
+    AvlTree<std::string, Article *> article_tree;
 
-    for (std::future<Article> &future_article: future_queue) {
-        // Get the article from the article_future And move it to the heap
-        Article *article = new Article(future_article.get());
-
-        //We are no longer processing each token per article
-        //instead for each article... we'll populate
-        //AVL tree in parallel.
-        //DEADLINE: We have Saturday/Sunday, otherwise, we roll back to the old version
+    for (std::future<Article *> &future_article: future_queue) {
+        // Get the article from the article_future
+        // And move it to the heap
+        Article *article = future_article.get();
+        // Go through the tokens of the article
+        for (const std::string &token: article->tokens) {
+            // Try to get the pair from the tree?
+            //Pair *pair = article_tree.search(lookup_pair);
+            // If the pair is null, add a new one with token into the tree
+            article_tree.insert(token, article);
+        }
     }
     future_queue.clear();
     return article_tree;
