@@ -170,14 +170,14 @@ class Parser {
 
 private:
     /// \description Parser::parse will move futures into this object, where they can be read later by build_AVL_tree()
-    std::vector<std::future<Article>> future_queue;
+    std::vector<std::future<Article *>> future_queue;
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
     /// \return Article     -> An article object
     /// \description        -> Reads, parses, extracts, and process data (persons, organizations,
     ///                     text) from raw JSON file
-    static Article parse_json(const std::filesystem::directory_entry &json_file);
+    static Article *parse_json(const std::filesystem::directory_entry &json_file);
 
 public:
     /// \description Parser::build_AVL_tree will move articles from future_queue into this object, where they can be read directly
@@ -192,7 +192,7 @@ public:
     /// \description                       -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                                     where they can be accessed. Optimally, this should only be called once and
     ///                                     should be called before accessing Parser::articles
-    AvlTree<std::string, Article*> build_AVL_tree();
+    AvlTree<std::string, Article *> build_AVL_tree();
 };
 
 
