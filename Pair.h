@@ -1,6 +1,9 @@
-//
-// Created by pravin on 4/14/22.
-//
+/**
+ * @Author(s):      Pravin and Kassi
+ * @filename:       Parser.h
+ * @date:           04-14-2022
+ * @description:    Represents a (word, article) pair to be stored in the AVL tree
+ */
 
 #ifndef INC_22S_FINAL_PROJ_PAIR_H
 #define INC_22S_FINAL_PROJ_PAIR_H
