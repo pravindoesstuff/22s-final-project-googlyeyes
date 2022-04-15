@@ -99,8 +99,8 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
  * accessed here anyways
  */
 
-AvlTree<std::string, Article*> Parser::build_AVL_tree() {
-    AvlTree<std::string, Article*> article_tree;
+AvlTree<std::string, Article *> Parser::build_AVL_tree() {
+    AvlTree<std::string, Article *> article_tree;
 
     for (std::future<Article> &future_article: future_queue) {
         // Get the article from the article_future
