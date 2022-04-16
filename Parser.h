@@ -169,8 +169,8 @@ static std::unordered_set<std::string> stop_words = {
 class Parser {
 
 private:
-    /// \description Parser::parse will move futures into this object, where they can be read later by build_AVL_tree()
-    std::vector<std::future<Article *>> future_queue;
+    /// \description Parser::parse will move futures of AVL trees into this vector
+    std::vector<std::future<AvlTree<std::string, Article *>>> future_queue;
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
