@@ -1,14 +1,20 @@
 #include "Parser.h"
-#include <iostream>
 
 int main(int argc, char **argv) {
     if (argc == 1) {
         return 1;
     }
     Parser parser;
-    //std::string search_term = argv[1];
+    std::string search_term = argv[1];
     parser.parse(argv[2]);
-    //AvlTree<std::string, Article *> pairs = parser.build_AVL_tree();
-    //std::cout << pairs.search(search_term);
+    std::vector<AvlTree<std::string, Article *>> pairs = parser.build_AVL_trees();
+    for (auto &pair: pairs) {
+        auto n = pair.search(search_term);
+        for (auto &i: *n)
+            std::cout << i->title << '\n';
+    }
+//    std::vector<Article *> matches = parser.search_article_trees(search_term, pairs);
+//    std::cout << matches.size();
+//    for (Article *article: matches) std::cout << article->id << '\n';
     return 0;
 }

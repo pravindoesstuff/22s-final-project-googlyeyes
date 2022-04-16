@@ -13,7 +13,6 @@
 template<typename K, typename V>
 class AvlTree {
 private:
-
     //AvlNode class declaration
     class AvlNode {
     public:
@@ -45,7 +44,7 @@ private:
 
     /// \param node     -> A node in the AVL tree
     /// \description    -> responsible for cloning subtree
-    AvlNode* clone(AvlNode *node) const;
+    AvlNode *clone(AvlNode *node) const;
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -76,12 +75,25 @@ public:
     //constructors
     AvlTree() : root(nullptr) {}
 
-    AvlTree(const AvlTree<K, V> &tree): root(nullptr){
-        root = clone( tree.root );
+    AvlTree(const AvlTree<K, V> &tree) : root(nullptr) {
+        root = clone(tree.root);
+    }
+
+    AvlTree(AvlTree<K, V> &&tree) noexcept: root(nullptr) {
+        *this = std::move(tree);
     }
 
     ~AvlTree() {
         make_empty(root);
+    }
+
+    AvlTree<K, V> &operator=(AvlTree<K, V> &&tree) noexcept {
+        if (this != &tree) {
+            this->~AvlTree();
+            this->root = tree.root;
+            tree.root = nullptr;
+        }
+        return *this;
     }
 
     /// \param value    -> Value to be added to AVL tree
@@ -110,11 +122,11 @@ void AvlTree<K, V>::make_empty(AvlTree::AvlNode *&node) {
 
 //FIXME: Please Make sure nodes VALUES are also being copied. I am tired XD
 template<typename K, typename V>
-typename AvlTree<K,V>::AvlNode* AvlTree<K, V>::clone(AvlNode *node) const {
-    if(node == nullptr)
+typename AvlTree<K, V>::AvlNode *AvlTree<K, V>::clone(AvlNode *node) const {
+    if (node == nullptr)
         return nullptr;
-    else{
-        return new AvlNode {node->key, clone( node->left), clone( node->right), node->height};
+    else {
+        return new AvlNode{node->key, clone(node->left), clone(node->right), node->height};
     }
 }
 
@@ -141,7 +153,9 @@ std::vector<V> *AvlTree<K, V>::search_node(const K &key, AvlTree::AvlNode *&node
         return search_node(key, node->right);
     } else if (key < node->key) {
         return search_node(key, node->left);
-    } else return &node->values;
+    } else {
+        return &node->values;
+    }
 }
 
 template<typename K, typename V>
