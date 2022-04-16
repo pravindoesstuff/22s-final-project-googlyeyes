@@ -108,7 +108,7 @@ void AvlTree<K, V>::make_empty(AvlTree::AvlNode *&node) {
     node = nullptr;
 }
 
-//FIXME: Please Make sure nodes VALUES are also being copied. I am not too sure. I am also tired XD
+//FIXME: Please Make sure nodes VALUES are also being copied. I am tired XD
 template<typename K, typename V>
 typename AvlTree<K,V>::AvlNode* AvlTree<K, V>::clone(AvlNode *node) const {
     if(node == nullptr)
