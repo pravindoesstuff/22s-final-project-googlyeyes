@@ -38,6 +38,7 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     //8- Tokenize, lowercase, and stemming
     std::istringstream ss(article->text);
     std::string token;
+    std::unordered_set<std::string> used_tokens;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
         if (stop_words.find(token) != stop_words.end()) {
@@ -69,7 +70,11 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         //stem token
         Porter2Stemmer::stem(token);
         //add token to list of tokens in the article.
-
+        if (used_tokens.find(token) != used_tokens.end()) {
+            continue;
+        } else {
+            used_tokens.insert(token);
+        }
         article->tokens.emplace_back(token);
     }
 
