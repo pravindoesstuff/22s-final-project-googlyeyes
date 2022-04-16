@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     std::vector<AvlTree<std::string, Article *>> pairs = parser.build_AVL_trees();
     for (auto &pair: pairs) {
         auto n = pair.search(search_term);
+        if (n == nullptr) continue;
         for (auto &i: *n)
             std::cout << i->title << '\n';
     }
