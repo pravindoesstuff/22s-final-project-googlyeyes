@@ -166,34 +166,36 @@ static std::unordered_set<std::string> stop_words = {
         "yourselves", "you've", "zero"
 };
 
-class Parser {
 
+class Parser {
 private:
     /// \description Parser::parse will move futures of AVL trees into this vector
-    std::vector<std::future<AvlTree<std::string, Article *>>> future_queue;
+    std::vector<std::future<Article *>> future_queue;
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
     /// \return AVL tree    -> A small AVL tree :)
     /// \description        -> Reads, parses, extracts, and process data (persons, organizations,
     ///                     text) from raw JSON file and populate a small AVL tree
-    static AvlTree<std::string, Article *> parse_json(const std::filesystem::directory_entry &json_file);
+    Article *parse_json(const std::filesystem::directory_entry &json_file);
 
 public:
-    /// \description Parser::build_AVL_tree will move articles from future_queue into this object, where they can be read directly
-    std::vector<Article> articles;
-
     ///
     /// \param root_folder_path            -> Path the kaggle folder (data set folder)
     /// \description                       -> asynchronously call "parse_folder" on EACH folder within
     ///                                     "root_folder_path" and store "Future" variables within the Parser::future_queue
     void parse(const std::filesystem::path &root_folder_path);
 
+    std::vector<Article *>
+    search_article_trees(const std::string &token, std::vector<AvlTree<std::string, Article *>> trees);
+
+    static AvlTree<std::string, Article *> make_tree(const std::vector<Article *> &articles);
+
     /// \return set of AVL trees    -> AVL trees returns by each threads
     /// \description                -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                             where they can be accessed. Optimally, this should only be called once and
     ///                             should be called before accessing Parser::articles
-    std::vector<AvlTree<std::string, Article *>> build_AVL_tree();
+    std::vector<AvlTree<std::string, Article *>> build_AVL_trees();
 };
 
 
