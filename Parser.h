@@ -174,10 +174,10 @@ private:
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
-    /// \return Article     -> An article object
+    /// \return AVL tree    -> A small AVL tree :)
     /// \description        -> Reads, parses, extracts, and process data (persons, organizations,
-    ///                     text) from raw JSON file
-    static Article *parse_json(const std::filesystem::directory_entry &json_file);
+    ///                     text) from raw JSON file and populate a small AVL tree
+    static AvlTree<std::string, Article *> parse_json(const std::filesystem::directory_entry &json_file);
 
 public:
     /// \description Parser::build_AVL_tree will move articles from future_queue into this object, where they can be read directly
