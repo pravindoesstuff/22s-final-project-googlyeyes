@@ -23,13 +23,11 @@ private:
         AvlNode *right;
         int height;
 
-        explicit AvlNode(const K &key, const V &value, AvlNode *lt = nullptr, AvlNode *rt = nullptr,
+        explicit AvlNode(const K &key, AvlNode *lt = nullptr, AvlNode *rt = nullptr,
                          int h = 0) : key(key),
                                       left(lt),
                                       right(rt),
-                                      height(h) {
-            values.emplace_back(value);
-        }
+                                      height(h) {}
     };
 
     /// \description    -> Return the node's height.
@@ -47,7 +45,7 @@ private:
 
     /// \param node     -> A node in the AVL tree
     /// \description    -> responsible for cloning subtree
-    AvlNode* clone(AvlNode *&node) const;
+    AvlNode* clone(AvlNode *node) const;
 
     /// \param alpha     -> Node of imbalance
     /// \description    -> Performs "case 1" rotation
@@ -110,12 +108,13 @@ void AvlTree<K, V>::make_empty(AvlTree::AvlNode *&node) {
     node = nullptr;
 }
 
+//FIXME: Please Make sure nodes VALUES are also being copied. I am not too sure. I am also tired XD
 template<typename K, typename V>
-typename AvlTree<K,V>::AvlNode* AvlTree<K, V>::clone(AvlNode *&node) const {
+typename AvlTree<K,V>::AvlNode* AvlTree<K, V>::clone(AvlNode *node) const {
     if(node == nullptr)
         return nullptr;
     else{
-        return new AvlNode {node->key, node->values, clone( node->left), clone( node->right), node->height};
+        return new AvlNode {node->key, clone( node->left), clone( node->right), node->height};
     }
 }
 
@@ -123,7 +122,8 @@ typename AvlTree<K,V>::AvlNode* AvlTree<K, V>::clone(AvlNode *&node) const {
 template<typename K, typename V>
 void AvlTree<K, V>::insert_node(const K &key, const V &value, AvlNode *&node) {
     if (node == nullptr) {
-        node = new AvlNode(key, value);
+        node = new AvlNode(key);
+        node->values.emplace_back(value);
     } else if (key < node->key) {
         insert_node(key, value, node->left);
     } else if (node->key < key) {
