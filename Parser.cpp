@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
+AvlTree<std::string, Article *> Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 
     //1- Open stream to file
     std::ifstream file(json_file.path());
@@ -78,7 +78,13 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     //10- Get Title
     article->title = JSON_document["title"].GetString();
 
-    return article;
+    //11- Insert individual words into AVL tree
+    AvlTree<std::string, Article *> article_tree;
+    for (const std::string &word: article->tokens) {
+        article_tree.insert(word, article);
+    }
+
+    return article_tree;
 }
 
 void Parser::parse(const std::filesystem::path &root_folder_path) {
@@ -99,21 +105,14 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
  * accessed here anyways
  */
 
-AvlTree<std::string, Article *> Parser::build_AVL_tree() {
-    AvlTree<std::string, Article *> article_tree;
+std::vector<AvlTree<std::string, Article *>> Parser::build_AVL_tree() {
+    //set of avl tree
+    std::vector<AvlTree<std::string, Article *>> avl_trees;
 
-    for (std::future<Article *> &future_article: future_queue) {
-        // Get the article from the article_future
-        // And move it to the heap
-        Article *article = future_article.get();
-        // Go through the tokens of the article
-        for (const std::string &token: article->tokens) {
-            // Try to get the pair from the tree?
-            //Pair *pair = article_tree.search(lookup_pair);
-            // If the pair is null, add a new one with token into the tree
-            article_tree.insert(token, article);
-        }
+    for (std::future<AvlTree<std::string, Article *>> &future_avl: future_queue) {
+        // Get current avl_tree from the future_avl and place it into avl_trees
+        avl_trees.push_back(future_avl.get());
     }
     future_queue.clear();
-    return article_tree;
+    return avl_trees;
 }

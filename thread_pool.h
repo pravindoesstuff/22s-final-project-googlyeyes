@@ -20,7 +20,7 @@
 class ThreadPool {
 public:
     explicit ThreadPool(
-            std::size_t num_threads = std::thread::hardware_concurrency() - 1)
+            std::size_t num_threads = std::thread::hardware_concurrency())
             : threads(),
               thread_map_(),
               queues_(std::max(1UL, num_threads)),

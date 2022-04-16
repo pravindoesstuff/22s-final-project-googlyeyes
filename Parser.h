@@ -169,15 +169,15 @@ static std::unordered_set<std::string> stop_words = {
 class Parser {
 
 private:
-    /// \description Parser::parse will move futures into this object, where they can be read later by build_AVL_tree()
-    std::vector<std::future<Article *>> future_queue;
+    /// \description Parser::parse will move futures of AVL trees into this vector
+    std::vector<std::future<AvlTree<std::string, Article *>>> future_queue;
     ThreadPool thread_pool;
 
     /// \param json_file    -> Path to JSON file within the filesystem
-    /// \return Article     -> An article object
+    /// \return AVL tree    -> A small AVL tree :)
     /// \description        -> Reads, parses, extracts, and process data (persons, organizations,
-    ///                     text) from raw JSON file
-    static Article *parse_json(const std::filesystem::directory_entry &json_file);
+    ///                     text) from raw JSON file and populate a small AVL tree
+    static AvlTree<std::string, Article *> parse_json(const std::filesystem::directory_entry &json_file);
 
 public:
     /// \description Parser::build_AVL_tree will move articles from future_queue into this object, where they can be read directly
@@ -189,10 +189,11 @@ public:
     ///                                     "root_folder_path" and store "Future" variables within the Parser::future_queue
     void parse(const std::filesystem::path &root_folder_path);
 
-    /// \description                       -> "Move all variables from Parser::future_queue into the Parser::articles,
-    ///                                     where they can be accessed. Optimally, this should only be called once and
-    ///                                     should be called before accessing Parser::articles
-    AvlTree<std::string, Article *> build_AVL_tree();
+    /// \return set of AVL trees    -> AVL trees returns by each threads
+    /// \description                -> "Move all variables from Parser::future_queue into the Parser::articles,
+    ///                             where they can be accessed. Optimally, this should only be called once and
+    ///                             should be called before accessing Parser::articles
+    std::vector<AvlTree<std::string, Article *>> build_AVL_tree();
 };
 
 
