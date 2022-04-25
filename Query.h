@@ -19,8 +19,8 @@ private:
     std::vector<std::string> and_keywords;
     std::vector<std::string> or_keywords;
     std::vector<std::string> not_words;
-    std::vector<std::string> organizations;
-    std::vector<std::string> persons;
+    std::string organization;
+    std::string person;
 
 public:
     explicit Query(const std::string& query);

@@ -30,10 +30,10 @@ Query::Query(const std::string &query) {
                     this->not_words.push_back(token);
                     break;
                 case ORG:
-                    this->organizations.push_back(token);
+                    this->organization = token;
                     break;
                 case PERSON :
-                    this->persons.push_back(token);
+                    this->person = token;
                     break;
             }
         }
