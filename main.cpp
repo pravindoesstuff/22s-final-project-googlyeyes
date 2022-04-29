@@ -1,7 +1,9 @@
 #include <iostream>
 #include "Parser.h"
+#include "Query.h"
 
 int main(int argc, char **argv) {
+  
     char option;
 
     do {

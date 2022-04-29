@@ -7,7 +7,7 @@ if (CMAKE_BUILD_TYPE MATCHES release)
 endif ()
 
 if (CMAKE_BUILD_TYPE MATCHES debug)
-    add_compile_options("-wall")
+    add_compile_options("-Wall")
     add_compile_options("-fanalyzer")
 endif ()
 

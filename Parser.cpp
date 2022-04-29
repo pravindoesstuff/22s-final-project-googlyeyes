@@ -39,6 +39,7 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     std::istringstream ss(article->text);
     std::string token;
     std::unordered_set<std::string> used_tokens;
+    std::unordered_map<std::string, std::string> stem_cache;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
         if (stop_words.find(token) != stop_words.end()) {
@@ -68,14 +69,24 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         }
 
         //stem token
-        Porter2Stemmer::stem(token);
+//        Porter2Stemmer::stem(token);
+
+        std::string stemmed = token;
+        auto stem_iter = stem_cache.find(token);
+        if (stem_iter != stem_cache.end()) {
+            stemmed = stem_iter->second;
+        } else {
+            stemmed = token;
+            Porter2Stemmer::stem(stemmed);
+            stem_cache[token] = stemmed;
+        }
         //add token to list of tokens in the article.
-        if (used_tokens.find(token) != used_tokens.end()) {
+        if (used_tokens.find(stemmed) != used_tokens.end()) {
             continue;
         } else {
-            used_tokens.insert(token);
+            used_tokens.insert(stemmed);
         }
-        article->tokens.emplace_back(token);
+        article->tokens.emplace_back(stemmed);
     }
 
     //9- Store ID
@@ -100,49 +111,14 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
     }
 }
 
-std::vector<Article *>
-Parser::search_article_trees(const std::string &token, std::vector<AvlTree<std::string, Article *>> trees) {
-    std::vector<std::future<std::vector<Article *> * >> future_tokens;
-    for (AvlTree<std::string, Article *> &articles: trees) {
-        future_tokens.emplace_back(thread_pool.enqueue(&AvlTree<std::string, Article *>::search, &articles, token));
-    }
-    std::vector<Article *> matching_articles;
-    for (std::future<std::vector<Article *> *> &future_articles: future_tokens) {
-        std::vector<Article *> *articles = future_articles.get();
-        if (articles != nullptr) {
-            for (Article *article: *articles) {
-                matching_articles.emplace_back(article);
-            }
-        }
-    }
-    return matching_articles;
-}
-
-AvlTree<std::string, Article *> Parser::make_tree(const std::vector<Article *> &articles) {
+AvlTree<std::string, Article *> Parser::build_AVL_trees() {
     AvlTree<std::string, Article *> article_tree;
-    for (Article *article: articles) {
-        for (const std::string &token: article->tokens) {
+    for (std::future<Article *> &future_article: future_queue) {
+        Article *article = future_article.get();
+        for (std::string &token: article->tokens) {
             article_tree.insert(token, article);
         }
+        article->tokens.clear();
     }
     return article_tree;
-}
-
-std::vector<AvlTree<std::string, Article *>> Parser::build_AVL_trees() {
-    uint nthreads = std::thread::hardware_concurrency();
-    size_t queue_len = future_queue.size();
-    std::vector<std::vector<Article *>> segmented_articles(nthreads);
-    for (size_t i = 0; i < queue_len; ++i) {
-        segmented_articles[i * nthreads / queue_len].emplace_back(future_queue[i].get());
-    }
-    future_queue.clear();
-    std::vector<std::future<AvlTree<std::string, Article *>>> future_trees;
-    for (const std::vector<Article *> &articles: segmented_articles) {
-        future_trees.emplace_back(thread_pool.enqueue(make_tree, articles));
-    }
-    std::vector<AvlTree<std::string, Article *>> trees;
-    for (auto &future_tree: future_trees) {
-        trees.emplace_back(future_tree.get());
-    }
-    return trees;
 }
