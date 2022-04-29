@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
     char option;
 
-    do{
+    do {
         std::cout << "---GOOGLEYES SEARCH ENGINE---" << std::endl;
 
         std::cout << "0 - Parse Dataset" << '\n';
@@ -15,32 +15,33 @@ int main(int argc, char **argv) {
         std::cin >> option;
 
         switch (option) {
-            case '0':{
+            case '0': {
                 //Parse dataset
                 std::cout << "Dataset parsed" << '\n';
                 break;
             }
 
-            case '1':{
+            case '1': {
                 //Display statistics
                 std::cout << "Statistics" << '\n';
                 break;
             }
 
-            case '2':{
+            case '2': {
                 //Search Datasets
                 std::cout << "Search" << '\n';
                 break;
             }
 
-            case '3':{
+            case '3': {
                 std::cout << "Bye!" << std::endl;
                 return 0;
             }
 
-            default:{
+            default: {
                 std::cout << "Bad option, Try again" << std::endl;
                 break;
             }
         }
-    }while(true);
+    } while (true);
+}
