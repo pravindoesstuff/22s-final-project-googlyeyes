@@ -2,6 +2,12 @@
 #include <getopt.h>
 
 int main(int argc, char **argv) {
+
+    //possible command-line OPTIONS
+    struct option search_engine_options[] = {
+            {"stats", no_argument, nullptr, 's'},
+            {"query", required_argument, nullptr, 'q'}
+    };
     if (argc == 1) {
         return 1;
     }
