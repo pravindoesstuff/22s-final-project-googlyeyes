@@ -1,21 +1,46 @@
+#include <iostream>
 #include "Parser.h"
 
 int main(int argc, char **argv) {
+    char option;
 
-    Parser parser;
-    std::string search_term = argv[1];
-    Porter2Stemmer::trim(search_term);
-    Porter2Stemmer::stem(search_term);
-    parser.parse(argv[2]);
-    std::vector<AvlTree<std::string, Article *>> pairs = parser.build_AVL_trees();
-    for (auto &pair: pairs) {
-        auto n = pair.search(search_term);
-        if (n == nullptr) continue;
-        for (auto &i: *n)
-            std::cout << i->title << '\n';
-    }
-//    std::vector<Article *> matches = parser.search_article_trees(search_term, pairs);
-//    std::cout << matches.size();
-//    for (Article *article: matches) std::cout << article->id << '\n';
-    return 0;
-}
+    do{
+        std::cout << "---GOOGLEYES SEARCH ENGINE---" << std::endl;
+
+        std::cout << "0 - Parse Dataset" << '\n';
+        std::cout << "1 - Display Engine Statistics" << '\n';
+        std::cout << "2 - Search Dataset" << '\n';
+        std::cout << "3 - Quit" << '\n';
+
+        std::cin >> option;
+
+        switch (option) {
+            case '0':{
+                //Parse dataset
+                std::cout << "Dataset parsed" << '\n';
+                break;
+            }
+
+            case '1':{
+                //Display statistics
+                std::cout << "Statistics" << '\n';
+                break;
+            }
+
+            case '2':{
+                //Search Datasets
+                std::cout << "Search" << '\n';
+                break;
+            }
+
+            case '3':{
+                std::cout << "Bye!" << std::endl;
+                return 0;
+            }
+
+            default:{
+                std::cout << "Bad option, Try again" << std::endl;
+                break;
+            }
+        }
+    }while(true);
