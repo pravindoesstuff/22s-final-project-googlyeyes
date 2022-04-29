@@ -190,7 +190,7 @@ public:
     /// \description                -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                             where they can be accessed. Optimally, this should only be called once and
     ///                             should be called before accessing Parser::articles
-    AvlTree<std::string, Article *> build_AVL_trees();
+    AvlTree<std::string, Article *> build_AVL_tree();
 };
 
 

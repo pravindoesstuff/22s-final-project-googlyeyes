@@ -32,11 +32,8 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article->organizations.emplace_back(organization["name"].GetString());
     }
 
-    //7- Store text
-    article->text = JSON_document["text"].GetString();
-
-    //8- Tokenize, lowercase, and stemming
-    std::istringstream ss(article->text);
+    //7- Tokenize, lowercase, and stemming
+    std::istringstream ss(JSON_document["text"].GetString());
     std::string token;
     std::unordered_set<std::string> used_tokens;
     std::unordered_map<std::string, std::string> stem_cache;
@@ -68,9 +65,6 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             c = (char) tolower(c);
         }
 
-        //stem token
-//        Porter2Stemmer::stem(token);
-
         std::string stemmed = token;
         auto stem_iter = stem_cache.find(token);
         if (stem_iter != stem_cache.end()) {
@@ -89,10 +83,10 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article->tokens.emplace_back(stemmed);
     }
 
-    //9- Store ID
+    //8- Store ID
     article->id = JSON_document["uuid"].GetString();
 
-    //10- Get Title
+    //9- Get Title
     article->title = JSON_document["title"].GetString();
 
     return article;
@@ -111,7 +105,7 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
     }
 }
 
-AvlTree<std::string, Article *> Parser::build_AVL_trees() {
+AvlTree<std::string, Article *> Parser::build_AVL_tree() {
     AvlTree<std::string, Article *> article_tree;
     for (std::future<Article *> &future_article: future_queue) {
         Article *article = future_article.get();
