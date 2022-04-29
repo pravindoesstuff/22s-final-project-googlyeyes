@@ -11,10 +11,13 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <set>
+#include "Article.h"
+#include "AvlTree.h"
 
 
 class Query {
-    
+
 private:
     std::vector<std::string> and_keywords;
     std::vector<std::string> or_keywords;
@@ -23,7 +26,9 @@ private:
     std::string person;
 
 public:
-    explicit Query(const std::string& query);
+    explicit Query(const std::string &query);
+
+    std::set<Article*> get_elements(const AvlTree<std::string, Article *>& article_tree);
 };
 
 

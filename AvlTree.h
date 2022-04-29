@@ -36,7 +36,7 @@ private:
     void insert_node(const K &key, const V &value, AvlNode *&node);
 
     /// \description    -> Search node in the AVL tree
-    std::vector<V> *search_node(const K &key, AvlNode *&node);
+    std::vector<V> *search_node(const K &key, AvlNode *node) const;
 
     /// \param node     -> A node in the AVL tree
     /// \description    -> Internal function responsible for emptying a node subtrees
@@ -105,8 +105,8 @@ public:
     /// \param value    -> Element to find
     /// \return T*      -> Pointer to value or NULL
     /// \description    -> Search
-    std::vector<V> *search(const K &key) {
-        return search_node(key, root);
+    std::vector<V> *search(const K &key) const {
+        return search_node(key,  root);
     }
 };
 
@@ -147,7 +147,7 @@ void AvlTree<K, V>::insert_node(const K &key, const V &value, AvlNode *&node) {
 }
 
 template<typename K, typename V>
-std::vector<V> *AvlTree<K, V>::search_node(const K &key, AvlTree::AvlNode *&node) {
+std::vector<V> *AvlTree<K, V>::search_node(const K &key, AvlTree::AvlNode *node) const {
     if (node == nullptr) return nullptr;
     if (node->key < key) {
         return search_node(key, node->right);
