@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
 
     char option;
     AvlTree<std::string, Article *> article_tree;
-    
+
     do {
         std::cout << "\n---GOOGLEYES SEARCH ENGINE---\n";
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
             case '1': {
                 //Display statistics
-                std::cout << "Statistics" << '\n';
+                std::cout << "\nTotal articles indexed is: " << article_tree.get_total_articles() << '\n';
                 break;
             }
 

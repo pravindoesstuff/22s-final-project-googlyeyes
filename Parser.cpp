@@ -107,6 +107,9 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
 
 AvlTree<std::string, Article *> Parser::build_AVL_tree() {
     AvlTree<std::string, Article *> article_tree;
+
+    //set the total number of article indexed
+    article_tree.set_total_articles(future_queue.size());
     for (std::future<Article *> &future_article: future_queue) {
         Article *article = future_article.get();
         for (std::string &token: article->tokens) {

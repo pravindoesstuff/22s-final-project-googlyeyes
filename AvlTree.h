@@ -13,6 +13,8 @@
 template<typename K, typename V>
 class AvlTree {
 private:
+    int total_articles = 0;
+
     //AvlNode class declaration
     class AvlNode {
     public:
@@ -88,6 +90,7 @@ public:
     }
 
     AvlTree<K, V> &operator=(AvlTree<K, V> &&tree) noexcept {
+        total_articles = tree.total_articles;
         if (this != &tree) {
             this->~AvlTree();
             this->root = tree.root;
@@ -107,6 +110,16 @@ public:
     /// \description    -> Search
     std::vector<V> *search(const K &key) const {
         return search_node(key,  root);
+    }
+
+    /// \param          -> N/A
+    /// \return         -> Total documents
+    /// \description    -> returns total number of documents in the tree
+    int get_total_articles() {     return total_articles;     }
+
+    /// \description    -> Updates the total number of documents in the tree
+    void set_total_articles(int new_total_document){
+        total_articles = new_total_document;
     }
 };
 
