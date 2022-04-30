@@ -14,6 +14,7 @@ template<typename K, typename V>
 class AvlTree {
 private:
     int total_articles = 0;
+    int total_tokens = 0;
 
     //AvlNode class declaration
     class AvlNode {
@@ -91,6 +92,8 @@ public:
 
     AvlTree<K, V> &operator=(AvlTree<K, V> &&tree) noexcept {
         total_articles = tree.total_articles;
+        total_tokens = tree.total_tokens;
+
         if (this != &tree) {
             this->~AvlTree();
             this->root = tree.root;
@@ -121,6 +124,16 @@ public:
     void set_total_articles(int new_total_document){
         total_articles = new_total_document;
     }
+
+    /// \param          -> N/A
+    /// \description    -> returns total number of documents in the tree
+    float get_word_article_ratio() {
+        return total_tokens / total_articles;
+    }
+
+    /// \param number   -> number to increase total number by
+    /// \description    -> Increases total_tokens variable
+    void add_tokens(int number) { total_tokens += number; }
 };
 
 template<typename K, typename V>

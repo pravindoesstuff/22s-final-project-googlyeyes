@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
             case '1': {
                 //Display statistics
                 std::cout << "\nTotal articles indexed is: " << article_tree.get_total_articles() << '\n';
+                std::cout << "Word-Article Ratio (Stop words excluded): " << article_tree.get_word_article_ratio() << '\n';
                 break;
             }
 

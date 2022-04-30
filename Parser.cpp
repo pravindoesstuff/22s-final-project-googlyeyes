@@ -112,6 +112,9 @@ AvlTree<std::string, Article *> Parser::build_AVL_tree() {
     article_tree.set_total_articles(future_queue.size());
     for (std::future<Article *> &future_article: future_queue) {
         Article *article = future_article.get();
+        //add article tokens to article_tree total tokens
+        article_tree.add_tokens(article->tokens.size());
+
         for (std::string &token: article->tokens) {
             article_tree.insert(token, article);
         }
