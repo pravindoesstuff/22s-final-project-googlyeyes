@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
                 //Display statistics
                 std::cout << "\nTotal articles indexed is: " << article_tree.get_total_articles() << '\n';
                 std::cout << "Word-Article Ratio (Stop words excluded): " << article_tree.get_word_article_ratio() << '\n';
+                std::cout << "TOP 25 Most frequent words(Descending): \n";
+                article_tree.proposition_279();
                 break;
             }
 
