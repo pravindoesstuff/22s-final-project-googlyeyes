@@ -105,11 +105,20 @@ public:
     V *find(const K &key) {
         size_t starting_idx = std::hash<K>()(key) % table_size;
         for (size_t i = 0; i < table_size - 1; ++i) {
-            if (table[i + starting_idx].key == key) {
-                return &(table[i + starting_idx].value);
+            Pair &pair = table[(i + starting_idx) % table_size];
+            if (pair.key == key) {
+                return &(pair.value);
             }
         }
         return nullptr;
+    }
+
+    V *begin() {
+        return table;
+    }
+
+    V *end() {
+        return table + table_size;
     }
 };
 

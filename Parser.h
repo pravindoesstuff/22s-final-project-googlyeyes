@@ -23,6 +23,7 @@
 #include <sstream>
 #include <algorithm>
 #include <unordered_set>
+#include "HashMap.h"
 
 #include "Article.h"
 #include "rapidjson/document.h"

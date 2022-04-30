@@ -1,5 +1,6 @@
 #include "Parser.h"
 
+
 Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 
     //1- Open stream to file
@@ -39,7 +40,7 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     std::istringstream ss(article->text);
     std::string token;
     std::unordered_set<std::string> used_tokens;
-    std::unordered_map<std::string, std::string> stem_cache;
+    HashMap<std::string, std::string> stem_cache;
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
         if (stop_words.find(token) != stop_words.end()) {
@@ -72,13 +73,13 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
 //        Porter2Stemmer::stem(token);
 
         std::string stemmed = token;
-        auto stem_iter = stem_cache.find(token);
-        if (stem_iter != stem_cache.end()) {
-            stemmed = stem_iter->second;
+        auto stem = stem_cache.find(token);
+        if (stem != nullptr) {
+            stemmed = *stem;
         } else {
             stemmed = token;
             Porter2Stemmer::stem(stemmed);
-            stem_cache[token] = stemmed;
+            stem_cache.insert({token, stemmed});
         }
         //add token to list of tokens in the article.
         if (used_tokens.find(stemmed) != used_tokens.end()) {
