@@ -32,11 +32,8 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article->organizations.emplace_back(organization["name"].GetString());
     }
 
-    //7- Store text
-    article->text = JSON_document["text"].GetString();
-
-    //8- Tokenize, lowercase, and stemming
-    std::istringstream ss(article->text);
+    //7- Tokenize, lowercase, and stemming
+    std::istringstream ss(JSON_document["text"].GetString());
     std::string token;
     std::unordered_set<std::string> used_tokens;
     std::unordered_map<std::string, std::string> stem_cache;
@@ -68,9 +65,6 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             c = (char) tolower(c);
         }
 
-        //stem token
-//        Porter2Stemmer::stem(token);
-
         std::string stemmed = token;
         auto stem_iter = stem_cache.find(token);
         if (stem_iter != stem_cache.end()) {
@@ -80,6 +74,12 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             Porter2Stemmer::stem(stemmed);
             stem_cache[token] = stemmed;
         }
+
+        //SECOND STOP WORD CHECK... because some NON stop words, when stemmed result in stop words
+        if (stop_words.find(stemmed) != stop_words.end()) {
+            continue;
+        }
+
         //add token to list of tokens in the article.
         if (used_tokens.find(stemmed) != used_tokens.end()) {
             continue;
@@ -89,10 +89,10 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
         article->tokens.emplace_back(stemmed);
     }
 
-    //9- Store ID
+    //8- Store ID
     article->id = JSON_document["uuid"].GetString();
 
-    //10- Get Title
+    //9- Get Title
     article->title = JSON_document["title"].GetString();
 
     return article;
@@ -111,10 +111,16 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
     }
 }
 
-AvlTree<std::string, Article *> Parser::build_AVL_trees() {
+AvlTree<std::string, Article *> Parser::build_AVL_tree() {
     AvlTree<std::string, Article *> article_tree;
+
+    //set the total number of article indexed
+    article_tree.set_total_articles(future_queue.size());
     for (std::future<Article *> &future_article: future_queue) {
         Article *article = future_article.get();
+        //add article tokens to article_tree total tokens
+        article_tree.add_tokens(article->tokens.size());
+
         for (std::string &token: article->tokens) {
             article_tree.insert(token, article);
         }

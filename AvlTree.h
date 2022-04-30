@@ -9,10 +9,16 @@
 #define INC_22S_FINAL_PROJ_AVLTREE_H
 
 #include <algorithm>
+#include <iostream>
+#include <queue>
+#include "Pair.h"
 
 template<typename K, typename V>
 class AvlTree {
 private:
+    int total_articles = 0;
+    int total_tokens = 0;
+
     //AvlNode class declaration
     class AvlNode {
     public:
@@ -88,6 +94,9 @@ public:
     }
 
     AvlTree<K, V> &operator=(AvlTree<K, V> &&tree) noexcept {
+        total_articles = tree.total_articles;
+        total_tokens = tree.total_tokens;
+
         if (this != &tree) {
             this->~AvlTree();
             this->root = tree.root;
@@ -108,6 +117,36 @@ public:
     std::vector<V> *search(const K &key) const {
         return search_node(key,  root);
     }
+
+    /// \param          -> N/A
+    /// \return         -> Total documents
+    /// \description    -> returns total number of documents in the tree
+    int get_total_articles() {     return total_articles;     }
+
+    /// \description    -> Updates the total number of documents in the tree
+    void set_total_articles(int new_total_document){
+        total_articles = new_total_document;
+    }
+
+    /// \param          -> N/A
+    /// \description    -> returns total number of documents in the tree
+    float get_word_article_ratio() {
+        return total_tokens / total_articles;
+    }
+
+    /// \param number   -> number to increase total number by
+    /// \description    -> Increases total_tokens variable
+    void add_tokens(int number) { total_tokens += number; }
+
+    /// \param node             -> Starting node
+    /// \return None            -> N/A
+    /// \desciption             -> Implement Pre Order traversal method, and populate priority queue for each visit
+    void pre_order(AvlNode *node, std::priority_queue<Pair>& queue);
+
+    /// \param None             -> N/A
+    /// \return None            ->
+    /// \description            -> Prints a list of the most 25 frequent words in the AVL tree to the console
+    void proposition_279();
 };
 
 template<typename K, typename V>
@@ -120,7 +159,6 @@ void AvlTree<K, V>::make_empty(AvlTree::AvlNode *&node) {
     node = nullptr;
 }
 
-//FIXME: Please Make sure nodes VALUES are also being copied. I am tired XD
 template<typename K, typename V>
 typename AvlTree<K, V>::AvlNode *AvlTree<K, V>::clone(AvlNode *node) const {
     if (node == nullptr)
@@ -219,6 +257,32 @@ void AvlTree<K, V>::rotate_with_right_child(AvlTree::AvlNode *&alpha) {
     alpha->height = std::max(height(alpha->left), height(alpha->right)) + 1;
     beta->height = std::max(height(beta->right), alpha->height) + 1;
     alpha = beta;
+}
+
+template<typename K, typename V>
+void AvlTree<K, V>::pre_order(AvlNode *node, std::priority_queue<Pair>& queue){
+    //1- Visit all nodes in AVL tree starting from root (PreOrder Traversal)
+    if(node != nullptr){
+        //2- For each (Make a "pair" object) && (Add to "queue")
+        Pair p(node->key, node->values.size());
+        queue.push(p);
+
+        //continue visiting and adding to "queue"
+        pre_order(node->left, queue);
+        pre_order(node->right, queue);
+    }
+}
+
+template<typename K, typename V>
+void AvlTree<K, V>::proposition_279() {
+    std::priority_queue<Pair> p_queue;
+    pre_order(root, p_queue);
+    //3- 25x (Print priority queue top, then pop)
+
+    for(int i = 0; i < 25; i++){
+        std::cout << p_queue.top().word << " -> " << p_queue.top().articles << '\n';
+        p_queue.pop();
+    }
 }
 
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
