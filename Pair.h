@@ -14,6 +14,11 @@ struct Pair {
     std::string word;
     unsigned int articles = 0;
 
+    Pair(std::string &wrd, unsigned int tot_article){
+        word = wrd;
+        articles = tot_article;
+    }
+
     bool operator<(const Pair& p)const{
         return articles < p.articles;
     }
