@@ -32,7 +32,7 @@
 
 //stop word list borrowed from: https://www.webconfs.com/stop-words.php
 static std::unordered_set<std::string> stop_words = {
-        "able", "about", "above", "abroad", "according", "accordingly",
+        "a", "able", "about", "above", "abroad", "according", "accordingly",
         "across", "actually",
         "adj", "after", "afterwards", "again", "against", "ago", "ahead",
         "ain't", "all", "allow",
