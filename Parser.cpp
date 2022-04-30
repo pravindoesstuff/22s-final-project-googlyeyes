@@ -74,6 +74,12 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
             Porter2Stemmer::stem(stemmed);
             stem_cache[token] = stemmed;
         }
+
+        //SECOND STOP WORD CHECK... because some NON stop words, when stemmed result in stop words
+        if (stop_words.find(stemmed) != stop_words.end()) {
+            continue;
+        }
+
         //add token to list of tokens in the article.
         if (used_tokens.find(stemmed) != used_tokens.end()) {
             continue;
