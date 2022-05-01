@@ -1,8 +1,4 @@
-#include <unordered_set>
-#include <iostream>
-#include <set>
 #include "Query.h"
-#include "porter2_stemmer.h"
 
 enum Tokenizer {
     AND,

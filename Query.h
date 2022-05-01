@@ -8,13 +8,15 @@
 #ifndef INC_22S_FINAL_PROJ_QUERY_H
 #define INC_22S_FINAL_PROJ_QUERY_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <set>
 #include "Article.h"
 #include "AvlTree.h"
-
+#include "porter2_stemmer.h"
+#include <unordered_set>
 
 class Query {
 
