@@ -12,6 +12,10 @@
 #include <iostream>
 #include <queue>
 #include "Pair.h"
+#include <string>
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 template<typename K, typename V>
 class AvlTree {
@@ -83,6 +87,18 @@ private:
     /// \param level    -> Current level
     /// \description    -> Write nodes (at a given level) to the disk
     void write_current_level(AvlNode* node, int level);
+
+    /// \param article*     -> Processed JSON object
+    /// \return string      -> A JSON representation of an Article
+    /// \description        -> Turn an "Article" object into a JSON string. The following is the expected result:
+    ///                       {
+    ///                         "id": "id_1",
+    ///                         "title": "title_1",
+    ///                         "persons": ["person_1", "person_n"],
+    ///                         "orgs": ["org_1", "org_n"],
+    ///                         "tokens": ["token_1", "token_n"]
+    ///                       }
+    std::string from_article_to_JSON (V* article);
 
     //AVL tree root node
     AvlNode *root;
@@ -297,7 +313,7 @@ void AvlTree<K, V>::proposition_279() {
 
 template<typename K, typename V>
 void AvlTree<K, V>::level_order(AvlNode *node) {
-
+    //Write each level of the AVL tree to the disk, one at a time
     for(int i = 1; i < node->height; i++){
         write_current_level(node, i);
     }
@@ -308,11 +324,65 @@ void AvlTree<K, V>::write_current_level(AvlNode *node, int level) {
     if(node == nullptr)
         return;
     if(level == 1){
-        //write node to the persistent file
+        //TODO Write node to the persistent file
     }
     else if(level > 1){
         write_current_level(node->left, level - 1);
         write_current_level(node->right, level - 1);
     }
+}
+
+template<typename K, typename V>
+std::string AvlTree<K,V>::from_article_to_JSON(V* article){
+    rapidjson::Document article_JSON; //Null
+
+    //set "article_JSON" as an empty object
+    article_JSON.SetObject();
+
+    // must pass an allocator when the object may need to allocate memory
+    rapidjson::Document::AllocatorType& allocator = article_JSON.GetAllocator();
+
+    //Create a rapidjson "value" and "array" types
+    rapidjson::Value value(rapidjson::kObjectType);
+    rapidjson::Value array(rapidjson::kArrayType);
+
+    //Populate "article_JSON" with "id"
+    value.SetString(article->id.c_str(), static_cast<rapidjson::SizeType>(article->id.length()), allocator);
+    article_JSON.AddMember("id", value, allocator);
+
+    //Populate "article_JSON" with title
+    value.SetString(article->title.c_str(), static_cast<rapidjson::SizeType>(article->title.length()), allocator);
+    article_JSON.AddMember("title", value, allocator);
+
+    //Populate "article_JSON" with "persons"
+    for(std::string &person: article->persons){
+        value.SetString(person.c_str(), static_cast<rapidjson::SizeType>(person.length()), allocator);
+        array.PushBack(value, allocator);
+    }
+    article_JSON.AddMember("persons", array, allocator);
+    array.Clear();
+
+    //Populate "article_JSON" with "orgs"
+    for(std::string &org: article->organizations){
+        value.SetString(org.c_str(), static_cast<rapidjson::SizeType>(org.length()), allocator);
+        array.PushBack(value, allocator);
+    }
+    article_JSON.AddMember("orgs", array, allocator);
+    array.Clear();
+
+    //Populate "article_JSON" with "tokens"
+    for(std::string &token: article->tokens){
+        value.SetString(token.c_str(), static_cast<rapidjson::SizeType>(token.length()), allocator);
+        array.PushBack(value, allocator);
+    }
+    article_JSON.AddMember("tokens", array, allocator);
+    array.Clear();
+
+    //return stringified "article_JSON"
+    rapidjson::StringBuffer str_buf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(str_buf);
+    article_JSON.Accept(writer);
+
+    return str_buf.GetString();
 }
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
