@@ -194,6 +194,11 @@ public:
     /// \return None            ->
     /// \description            -> Prints a list of the most 25 frequent words in the AVL tree to the console
     void proposition_279();
+
+    /// \param None             -> N/A
+    /// \return None            -> N/A
+    /// \description            -> Turns this AVL tree into a JSON string, and write it to same level as the executable
+    void form_persistent_file();
 };
 
 template<typename K, typename V>
@@ -464,5 +469,18 @@ std::string AvlTree<K, V>::from_node_to_JSON(AvlNode *node) {
     node_JSON.Accept(writer);
 
     return str_buf.GetString();
+}
+
+template<typename K, typename V>
+void AvlTree<K, V>::form_persistent_file() {
+    //Turn this AVL tree into JSON string
+    std::string tree_JSON = from_tree_to_JSON(root);
+
+    //write JSON string to a file in the current directory
+    std::ofstream output_stream( "output.txt", std::ios::out);
+    output_stream << tree_JSON;
+
+    //close stream
+    output_stream.close();
 }
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
