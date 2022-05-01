@@ -50,6 +50,9 @@ Query::Query(const std::string &query) {
 }
 
 std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &article_tree) {
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+    start = std::chrono::high_resolution_clock::now();
+
     std::set<Article *> article_set;
     if (and_keywords.empty()) {
         for (const std::string &keyword: or_keywords) {
@@ -90,5 +93,10 @@ std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &a
         }
         filtered_set.insert(article);
     }
+
+    end = std::chrono::high_resolution_clock::now();
+    //calculate the duration between "start" and "end"
+    std::chrono::duration<double> time_in_seconds = end - start;
+    query_processing_time = time_in_seconds.count();
     return filtered_set;
 }

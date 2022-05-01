@@ -17,6 +17,7 @@
 #include "AvlTree.h"
 #include "porter2_stemmer.h"
 #include <unordered_set>
+#include <chrono>
 
 class Query {
 
@@ -27,13 +28,12 @@ private:
     std::string organization;
     std::string person;
 
-    int query_processing_time = 0;
+    double query_processing_time = 0;
 public:
     explicit Query(const std::string &query);
 
     std::set<Article*> get_elements(const AvlTree<std::string, Article *>& article_tree);
-    void set_query_processing_time(int new_time) { query_processing_time = new_time; }
-    int get_query_processing_time(){ return  query_processing_time; }
+    double get_query_processing_time(){ return  query_processing_time; }
 };
 
 

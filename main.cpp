@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
                 //Display statistics
                 std::cout << "\nTotal articles indexed is: " << article_tree.get_total_articles() << '\n';
                 std::cout << "Word-Article Ratio (Stop words excluded): " << article_tree.get_word_article_ratio() << '\n';
-                std::cout << "TOP 25 Most frequent words(Descending): \n";
+                std::cout << "TOP 25 Most frequent words (Descending): \n";
                 article_tree.proposition_279();
                 break;
             }
@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 
                 Query query(search_request);
                 std::set<Article *> articles = query.get_elements(article_tree);
+                std::cout << "\n---Search performed in: " << query.get_query_processing_time() << " second(s)---\n";
                 for(Article *article : articles) {
                     std::cout << article->id << '\n';
                 }
