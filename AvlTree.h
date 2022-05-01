@@ -199,6 +199,11 @@ public:
     /// \return None            -> N/A
     /// \description            -> Turns this AVL tree into a JSON string, and write it to same level as the executable
     void form_persistent_file();
+
+    /// \param None             -> N/A
+    /// \return None            -> N/A
+    /// \description            -> clears persistent file content
+    void clear_persistent_file();
 };
 
 template<typename K, typename V>
@@ -482,5 +487,22 @@ void AvlTree<K, V>::form_persistent_file() {
 
     //close stream
     output_stream.close();
+}
+
+template<typename K, typename V>
+void AvlTree<K, V>::clear_persistent_file() {
+    std::ifstream input_stream("output.txt", std::ios::in);
+
+    //if "output.txt" exits...
+    if(input_stream.good()){
+        //close then open it back in "trunc" mode to clear all content.
+        input_stream.close();
+        std::ofstream output_stream("output.txt", std::ios::trunc);
+        output_stream.close();
+    }
+    //if not...
+    else{
+        return;
+    }
 }
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
