@@ -98,7 +98,7 @@ private:
     ///                         "orgs": ["org_1", "org_n"],
     ///                         "tokens": ["token_1", "token_n"]
     ///                       }
-    std::string from_article_to_JSON (V* article);
+    std::string from_article_to_JSON (V article);
 
     //AVL tree root node
     AvlNode *root;
@@ -333,7 +333,7 @@ void AvlTree<K, V>::write_current_level(AvlNode *node, int level) {
 }
 
 template<typename K, typename V>
-std::string AvlTree<K,V>::from_article_to_JSON(V* article){
+std::string AvlTree<K,V>::from_article_to_JSON(V article){
     rapidjson::Document article_JSON; //Null
 
     //set "article_JSON" as an empty object
