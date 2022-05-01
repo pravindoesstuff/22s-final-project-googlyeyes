@@ -33,7 +33,7 @@
 
 //stop word list borrowed from: https://www.webconfs.com/stop-words.php
 static std::unordered_set<std::string> stop_words = {
-        "able", "about", "above", "abroad", "according", "accordingly",
+        "a", "able", "about", "above", "abroad", "according", "accordingly",
         "across", "actually",
         "adj", "after", "afterwards", "again", "against", "ago", "ahead",
         "ain't", "all", "allow",
@@ -191,7 +191,7 @@ public:
     /// \description                -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                             where they can be accessed. Optimally, this should only be called once and
     ///                             should be called before accessing Parser::articles
-    AvlTree<std::string, Article *> build_AVL_trees();
+    AvlTree<std::string, Article *> build_AVL_tree();
 };
 
 

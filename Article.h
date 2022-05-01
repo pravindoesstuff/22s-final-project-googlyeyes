@@ -14,7 +14,6 @@
 struct Article {
     std::string id;
     std::string title;
-    std::string text;
     std::vector<std::string> persons;
     std::vector<std::string> organizations;
     std::vector<std::string> tokens;
