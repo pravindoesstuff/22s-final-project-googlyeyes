@@ -100,6 +100,18 @@ private:
     ///                       }
     std::string from_article_to_JSON (V article);
 
+    /// \param node*        -> AVL tree node
+    /// \return string      -> A JSON representation of an AVL node
+    /// \description        -> Turn an AVL node into a JSON string
+    ///                        {
+    ///                            "word": "word",
+    ///                            "articles": [
+    ///                                    article_1,
+    ///                                    article_n,
+    ///                            ]
+    ///                        }
+    std::string from_node_to_JSON(AvlNode *node);
+
     //AVL tree root node
     AvlNode *root;
 public:
@@ -382,6 +394,41 @@ std::string AvlTree<K,V>::from_article_to_JSON(V article){
     rapidjson::StringBuffer str_buf;
     rapidjson::Writer<rapidjson::StringBuffer> writer(str_buf);
     article_JSON.Accept(writer);
+
+    return str_buf.GetString();
+}
+
+template<typename K, typename V>
+std::string AvlTree<K, V>::from_node_to_JSON(AvlNode *node) {
+    rapidjson::Document node_JSON; //Null
+
+    //set "node_JSON" as an empty object
+    node_JSON.SetObject();
+
+    // must pass an allocator when the object may need to allocate memory
+    rapidjson::Document::AllocatorType& allocator = node_JSON.GetAllocator();
+
+    //Create a rapidjson "value" and "array" types
+    rapidjson::Value value(rapidjson::kObjectType);
+    rapidjson::Value array(rapidjson::kArrayType);
+
+    //Populate "node_JSON" with "word"
+    value.SetString(node->key.c_str(), static_cast<rapidjson::SizeType>(node->key.length()), allocator);
+    node_JSON.AddMember("word", value, allocator);
+
+    //Populate "node_JSON" with "articles"
+    for(V article: node->values){
+        std::string article_JSON = from_article_to_JSON(article);
+        value.SetString(article_JSON.c_str(), static_cast<rapidjson::SizeType>(article_JSON.length()), allocator);
+        array.PushBack(value, allocator);
+    }
+    node_JSON.AddMember("articles", array, allocator);
+    array.Clear();
+
+    //return stringified "node_JSON"
+    rapidjson::StringBuffer str_buf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(str_buf);
+    node_JSON.Accept(writer);
 
     return str_buf.GetString();
 }
