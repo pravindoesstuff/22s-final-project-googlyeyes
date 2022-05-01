@@ -74,6 +74,16 @@ private:
     /// \description    -> balances AVL tree
     void balance(AvlNode *&node);
 
+    /// \param node     -> Starting node
+    /// \description    -> Visit nodes in tree (Level Order traversal), and writes each node visited
+    ///                 to the disk
+    void level_order(AvlNode* node);
+
+    /// \param node     -> Current node
+    /// \param level    -> Current level
+    /// \description    -> Write nodes (at a given level) to the disk
+    void write_current_level(AvlNode* node, int level);
+
     //AVL tree root node
     AvlNode *root;
 public:
@@ -285,4 +295,24 @@ void AvlTree<K, V>::proposition_279() {
     }
 }
 
+template<typename K, typename V>
+void AvlTree<K, V>::level_order(AvlNode *node) {
+
+    for(int i = 1; i < node->height; i++){
+        write_current_level(node, i);
+    }
+}
+
+template<typename K, typename V>
+void AvlTree<K, V>::write_current_level(AvlNode *node, int level) {
+    if(node == nullptr)
+        return;
+    if(level == 1){
+        //write node to the persistent file
+    }
+    else if(level > 1){
+        write_current_level(node->left, level - 1);
+        write_current_level(node->right, level - 1);
+    }
+}
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
