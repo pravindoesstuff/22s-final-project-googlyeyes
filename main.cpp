@@ -12,9 +12,11 @@ int main(int argc, char **argv) {
         std::cout << "\n---GOOGLEYES SEARCH ENGINE---\n";
 
         std::cout << "0 - Parse Dataset" << '\n';
-        std::cout << "1 - Display Engine Statistics" << '\n';
-        std::cout << "2 - Search Dataset" << '\n';
-        std::cout << "3 - Quit" << '\n';
+        std::cout << "1 - Form Persistent File" << '\n';
+        std::cout << "2 - Clear Persistent File" << '\n';
+        std::cout << "3 - Display Engine Statistics" << '\n';
+        std::cout << "4 - Search Dataset" << '\n';
+        std::cout << "5 - Quit" << '\n';
 
         std::cout << "Enter option: ";
         std::cin >> option;
@@ -33,16 +35,28 @@ int main(int argc, char **argv) {
                 break;
             }
 
-            case '1': {
+            case '1':{
+                //TODO "form persistent file". MUST be implemented in AVLTree.h
+                //AVLTree::form_persistent_file()
+                break;
+            }
+
+            case '2':{
+                //TODO "clear persistent file". MUST be implemented in AVLTree.h
+                //AVLTree::clear_persistent_file()
+                break;
+            }
+
+            case '3': {
                 //Display statistics
                 std::cout << "\nTotal articles indexed is: " << article_tree.get_total_articles() << '\n';
                 std::cout << "Word-Article Ratio (Stop words excluded): " << article_tree.get_word_article_ratio() << '\n';
-                std::cout << "TOP 25 Most frequent words(Descending): \n";
+                std::cout << "TOP 25 Most frequent words (Descending): \n";
                 article_tree.proposition_279();
                 break;
             }
 
-            case '2': {
+            case '4': {
                 //Search Dataset
                 std::cout << "Enter search request: ";
                 std::string search_request;
@@ -51,13 +65,14 @@ int main(int argc, char **argv) {
 
                 Query query(search_request);
                 std::set<Article *> articles = query.get_elements(article_tree);
+                std::cout << "\n---Search performed in: " << query.get_query_processing_time() << " second(s)---\n";
                 for(Article *article : articles) {
                     std::cout << article->id << '\n';
                 }
                 break;
             }
 
-            case '3': {
+            case '5': {
                 std::cout << "Bye!" << '\n';
                 return 0;
             }
