@@ -13,6 +13,7 @@
 #include <queue>
 #include "Pair.h"
 #include <string>
+#include <fstream>
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
@@ -78,15 +79,23 @@ private:
     /// \description    -> balances AVL tree
     void balance(AvlNode *&node);
 
-    /// \param node     -> Starting node
-    /// \description    -> Visit nodes in tree (Level Order traversal), and writes each node visited
-    ///                 to the disk
-    void level_order(AvlNode* node);
+    /// \param node         -> Starting node
+    /// \return tree_JSON   -> A JSON representation of an AVL tree
+    /// \description        -> Visit AVL tree nodes (Level Order style), turn them to JSON, and
+    ///                 add them to "tree_JSON". Expected result:
+    ///                    {
+    ///                        "nodes": [
+    ///                                node_1,
+    ///                                node_n,
+    ///                        ]
+    ///                    }
+    std::string from_tree_to_JSON(AvlNode* node);
 
     /// \param node     -> Current node
     /// \param level    -> Current level
-    /// \description    -> Write nodes (at a given level) to the disk
-    void write_current_level(AvlNode* node, int level);
+    /// \description    -> Will turn each nodes (at a given level in AVL tree) into JSON and stores them
+    ///                 into a rapidJSON array, using "tree_JSON" allocator. This function and from_tree_to_JSON work together
+    void jsonify_AVL_nodes(AvlNode* node, int level, rapidjson::Value& arr, rapidjson::Document::AllocatorType& allocator);
 
     /// \param article*     -> Processed JSON object
     /// \return string      -> A JSON representation of an Article
@@ -324,23 +333,47 @@ void AvlTree<K, V>::proposition_279() {
 }
 
 template<typename K, typename V>
-void AvlTree<K, V>::level_order(AvlNode *node) {
-    //Write each level of the AVL tree to the disk, one at a time
+std::string AvlTree<K, V>::from_tree_to_JSON(AvlNode *node) {
+    rapidjson::Document tree_JSON; //Null
+    tree_JSON.SetObject();
+
+    // must pass an allocator when the object may need to allocate memory
+    rapidjson::Document::AllocatorType& allocator = tree_JSON.GetAllocator();
+
+    //Create a rapidjson "value" and "array" types
+    rapidjson::Value array(rapidjson::kArrayType);
+
+    //Turn nodes at each level into JSON, and store them into "array", using "allocator"
     for(int i = 1; i < node->height; i++){
-        write_current_level(node, i);
+        jsonify_AVL_nodes(node, i, array, allocator);
     }
+
+    //populate tree_JSON with "nodes"
+    tree_JSON.AddMember("nodes", array, allocator);
+
+    //stringify and return "tree_JSON"
+    rapidjson::StringBuffer str_buf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(str_buf);
+    tree_JSON.Accept(writer);
+
+    return str_buf.GetString();
 }
 
 template<typename K, typename V>
-void AvlTree<K, V>::write_current_level(AvlNode *node, int level) {
+void AvlTree<K, V>::jsonify_AVL_nodes(AvlNode *node, int level, rapidjson::Value& arr, rapidjson::Document::AllocatorType& allocator) {
     if(node == nullptr)
         return;
     if(level == 1){
-        //TODO Write node to the persistent file
+        //Turn node into JSON
+        std::string node_json = from_node_to_JSON(node);
+        //add it to "array"
+        rapidjson::Value value(rapidjson::kObjectType);
+        value.SetString(node_json.c_str(), static_cast<rapidjson::SizeType>(node_json.length()), allocator);
+        arr.PushBack(value, allocator);
     }
     else if(level > 1){
-        write_current_level(node->left, level - 1);
-        write_current_level(node->right, level - 1);
+        jsonify_AVL_nodes(node->left, level - 1);
+        jsonify_AVL_nodes(node->right, level - 1);
     }
 }
 
