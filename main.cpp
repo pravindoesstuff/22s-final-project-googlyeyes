@@ -36,8 +36,7 @@ int main(int argc, char **argv) {
             }
 
             case '1':{
-                //TODO "form persistent file". MUST be implemented in AVLTree.h
-                //AVLTree::form_persistent_file()
+                article_tree.form_persistent_file();
                 break;
             }
 
