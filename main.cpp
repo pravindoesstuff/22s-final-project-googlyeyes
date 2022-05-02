@@ -41,8 +41,7 @@ int main(int argc, char **argv) {
             }
 
             case '2':{
-                //TODO "clear persistent file". MUST be implemented in AVLTree.h
-                //AVLTree::clear_persistent_file()
+                article_tree.clear_persistent_file();
                 break;
             }
 
