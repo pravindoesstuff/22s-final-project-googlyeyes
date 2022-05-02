@@ -382,8 +382,8 @@ void AvlTree<K, V>::jsonify_AVL_nodes(AvlNode *node, int level, rapidjson::Value
         arr.PushBack(value, allocator);
     }
     else if(level > 1){
-        jsonify_AVL_nodes(node->left, level - 1);
-        jsonify_AVL_nodes(node->right, level - 1);
+        jsonify_AVL_nodes(node->left, level - 1, arr, allocator);
+        jsonify_AVL_nodes(node->right, level - 1, arr, allocator);
     }
 }
 
