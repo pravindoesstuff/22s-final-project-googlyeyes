@@ -33,7 +33,6 @@ private:
 
     Pair *table;
     size_t table_size;
-    size_t insertion_count;
 
     void resize(size_t new_size) {
         Pair *new_table = new Pair[new_size];
@@ -50,6 +49,7 @@ private:
     }
 
 public:
+    size_t insertion_count;
     HashMap() : table(new Pair[INITIAL_CAPACITY]), table_size(INITIAL_CAPACITY), insertion_count(0) {}
 
     HashMap(const HashMap<K, V> &hash_map) {
@@ -102,7 +102,7 @@ public:
         ++insertion_count;
     }
 
-    V *find(const K &key) {
+    V *find(const K &key) const {
         size_t starting_idx = std::hash<K>()(key) % table_size;
         for (size_t i = 0; i < table_size - 1; ++i) {
             Pair &pair = table[(i + starting_idx) % table_size];

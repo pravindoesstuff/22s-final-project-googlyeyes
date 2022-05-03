@@ -16,6 +16,7 @@
 #include "Article.h"
 #include "AvlTree.h"
 #include "porter2_stemmer.h"
+#include "HashMap.h"
 #include <unordered_set>
 #include <chrono>
 
@@ -32,8 +33,21 @@ private:
 public:
     explicit Query(const std::string &query);
 
-    std::set<Article*> get_elements(const AvlTree<std::string, Article *>& article_tree);
-    double get_query_processing_time(){ return  query_processing_time; }
+    std::set<Article *> get_elements(const AvlTree<std::string, Article *> &article_tree,
+                                     const HashMap <std::string, std::set<Article *>> &person_map,
+                                     const HashMap <std::string, std::set<Article *>> &orgs_map);
+
+    double get_query_processing_time() { return query_processing_time; }
+
+    int frequency(const std::vector<std::string> &tokens);
+};
+
+struct ArticlePair {
+    Article *article;
+    int weight;
+    bool operator<(const ArticlePair &pair) {
+        return weight < pair.weight;
+    }
 };
 
 

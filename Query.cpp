@@ -49,7 +49,9 @@ Query::Query(const std::string &query) {
     }
 }
 
-std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &article_tree) {
+std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &article_tree,
+                                        const HashMap<std::string, std::set<Article *>> &person_map,
+                                        const HashMap<std::string, std::set<Article *>> &orgs_map) {
     std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
     start = std::chrono::high_resolution_clock::now();
 
@@ -81,6 +83,27 @@ std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &a
         }
     }
     std::set<Article *> filtered_set;
+    if (!organization.empty()) {
+        const auto org_set = orgs_map.find(organization);
+        if (org_set != nullptr) {
+            for (Article *article: article_set) {
+                if (org_set->find(article) != org_set->end()) {
+                    filtered_set.insert(article);
+                }
+            }
+        }
+    }
+    if (!person.empty()) {
+        const auto person_set = orgs_map.find(person);
+        if (person_set != nullptr) {
+            for (Article *article: article_set) {
+                if (person_set->find(article) != person_set->end()) {
+                    filtered_set.insert(article);
+                }
+            }
+        }
+    }
+    filtered_set = {};
     for (Article *article: article_set) {
         if (!organization.empty() &&
             std::find(article->organizations.cbegin(), article->organizations.cend(), organization) ==
@@ -94,9 +117,29 @@ std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &a
         filtered_set.insert(article);
     }
 
+
     end = std::chrono::high_resolution_clock::now();
     //calculate the duration between "start" and "end"
     std::chrono::duration<double> time_in_seconds = end - start;
     query_processing_time = time_in_seconds.count();
     return filtered_set;
 }
+
+// This does something
+int Query::frequency(const std::vector<std::string> &tokens) {
+    int weight = 0;
+    for (const std::string &tok: tokens) {
+        for (const std::string &str: and_keywords) {
+            if (abs(strcmp(tok.c_str(), str.c_str())) < 10) {
+                ++weight;
+            }
+        }
+        for (const std::string &str: or_keywords) {
+            if (abs(strcmp(tok.c_str(), str.c_str())) < 10) {
+                ++weight;
+            }
+        }
+    }
+    return weight;
+}
+

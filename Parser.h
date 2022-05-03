@@ -23,6 +23,7 @@
 #include <sstream>
 #include <algorithm>
 #include <unordered_set>
+#include <set>
 #include "HashMap.h"
 
 #include "Article.h"
@@ -192,6 +193,8 @@ public:
     ///                             where they can be accessed. Optimally, this should only be called once and
     ///                             should be called before accessing Parser::articles
     AvlTree<std::string, Article *> build_AVL_tree();
+
+    HashMap<std::string, std::set<Article*>> orgs_map, person_map;
 };
 
 

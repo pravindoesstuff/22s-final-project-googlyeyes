@@ -22,7 +22,7 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     auto &entities = JSON_document["entities"]; //an element of the JSON file containing arrays
     auto &persons = entities["persons"]; //an array
     for (const auto &person: persons.GetArray()) {
-        //add person names to article vector named "persons"
+        //add person_map names to article vector named "persons"
         article->persons.emplace_back(person["name"].GetString());
     }
 
@@ -121,6 +121,24 @@ AvlTree<std::string, Article *> Parser::build_AVL_tree() {
         Article *article = future_article.get();
         //add article tokens to article_tree total tokens
         article_tree.add_tokens(article->tokens.size());
+
+        for (std::string &person: article->persons) {
+            auto person_set = person_map.find(person);
+            if (person_set != nullptr) {
+                person_set->insert(article);
+            } else {
+                person_map.insert({person, {article}});
+            }
+        }
+
+        for (std::string &organization: article->organizations) {
+            auto orgs_set = orgs_map.find(organization);
+            if (orgs_set != nullptr) {
+                orgs_set->insert(article);
+            } else {
+                orgs_map.insert({organization, {article}});
+            }
+        }
 
         for (std::string &token: article->tokens) {
             article_tree.insert(token, article);
