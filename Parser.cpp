@@ -34,10 +34,11 @@ Article *Parser::parse_json(const std::filesystem::directory_entry &json_file) {
     }
 
     //7- Tokenize, lowercase, and stemming
-    std::istringstream ss(JSON_document["text"].GetString());
+    article->text = JSON_document["text"].GetString();
+    std::istringstream ss(article->text);
     std::string token;
     std::unordered_set<std::string> used_tokens;
-    HashMap<std::string, std::string> stem_cache;
+    HashMap<std::string, std::string> stem_cache(50);
     while (std::getline(ss, token, ' ')) {
         //if stop-word, ignore.
         if (stop_words.find(token) != stop_words.end()) {
@@ -112,6 +113,8 @@ void Parser::parse(const std::filesystem::path &root_folder_path) {
     }
 }
 
+
+
 AvlTree<std::string, Article *> Parser::build_AVL_tree() {
     AvlTree<std::string, Article *> article_tree;
 
@@ -121,28 +124,34 @@ AvlTree<std::string, Article *> Parser::build_AVL_tree() {
         Article *article = future_article.get();
         //add article tokens to article_tree total tokens
         article_tree.add_tokens(article->tokens.size());
-
-        for (std::string &person: article->persons) {
-            auto person_set = person_map.find(person);
-            if (person_set != nullptr) {
-                person_set->insert(article);
-            } else {
-                person_map.insert({person, {article}});
+        k1.insert(article->persons.cbegin(), article->persons.cend());
+        k2.insert(article->organizations.cbegin(), article->organizations.cend());
+        goto persons;
+        std::async([this, article] () {
+            for (std::string &person: article->persons) {
+                auto person_set = person_map.find(person);
+                if (person_set != nullptr) {
+                    person_set->insert(article);
+                } else {
+                    person_map.insert({person, {article}});
+                }
             }
-        }
-
-        for (std::string &organization: article->organizations) {
-            auto orgs_set = orgs_map.find(organization);
-            if (orgs_set != nullptr) {
-                orgs_set->insert(article);
-            } else {
-                orgs_map.insert({organization, {article}});
+        }).wait();
+        std::async([this, article] () {
+            for (std::string &organization: article->organizations) {
+                auto orgs_set = orgs_map.find(organization);
+                if (orgs_set != nullptr) {
+                    orgs_set->insert(article);
+                } else {
+                    orgs_map.insert({organization, {article}});
+                }
             }
-        }
-
+        }).wait(); persons:
         for (std::string &token: article->tokens) {
             article_tree.insert(token, article);
         }
+        //t1.wait();
+        //t2.wait();
         article->tokens.clear();
     }
     return article_tree;

@@ -21,15 +21,15 @@ Query::Query(const std::string &query) {
         else {
             switch (current_tokenizer) {
                 case AND:
-                    Porter2Stemmer::trim(token);
+                    Porter2Stemmer::stem(token);
                     this->and_keywords.push_back(token);
                     break;
                 case OR:
-                    Porter2Stemmer::trim(token);
+                    Porter2Stemmer::stem(token);
                     this->or_keywords.push_back(token);
                     break;
                 case NOT:
-                    Porter2Stemmer::trim(token);
+                    Porter2Stemmer::stem(token);
                     this->not_words.push_back(token);
                     break;
                 case ORG:
@@ -117,6 +117,19 @@ std::set<Article *> Query::get_elements(const AvlTree<std::string, Article *> &a
         filtered_set.insert(article);
     }
 
+    std::set<Article *> not_filtered;
+
+    for (std::string &tok: not_words) {
+        auto vec = article_tree.search(tok);
+        if (vec != nullptr) {
+            for (auto n: *vec) {
+                auto find = filtered_set.find(n);
+                if (find != filtered_set.end()) {
+                    filtered_set.erase(find);
+                }
+            }
+        }
+    }
 
     end = std::chrono::high_resolution_clock::now();
     //calculate the duration between "start" and "end"

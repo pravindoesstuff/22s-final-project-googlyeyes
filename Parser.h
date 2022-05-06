@@ -188,6 +188,7 @@ public:
     ///                                     "root_folder_path" and store "Future" variables within the Parser::future_queue
     void parse(const std::filesystem::path &root_folder_path);
 
+    std::set<std::string> k1, k2;
     /// \return set of AVL trees    -> AVL trees returns by each threads
     /// \description                -> "Move all variables from Parser::future_queue into the Parser::articles,
     ///                             where they can be accessed. Optimally, this should only be called once and

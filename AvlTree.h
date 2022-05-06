@@ -204,6 +204,16 @@ public:
     /// \return None            -> N/A
     /// \description            -> clears persistent file content
     void clear_persistent_file();
+
+    size_t size() {
+        return size(root);
+    }
+    size_t size(AvlNode *node) {
+        if (node == nullptr) {
+            return 0;
+        }
+        return size(node->left) + size(node->right) + 1;
+    }
 };
 
 template<typename K, typename V>
@@ -500,7 +510,7 @@ void AvlTree<K, V>::clear_persistent_file() {
         std::ofstream output_stream("tree.txt", std::ios::trunc);
         output_stream.close();
     }
-    //if not...
+        //if not...
     else{
         return;
     }

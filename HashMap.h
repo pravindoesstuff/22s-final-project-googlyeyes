@@ -5,7 +5,7 @@
 #ifndef INC_22S_FINAL_PROJ_HASHMAP_H
 #define INC_22S_FINAL_PROJ_HASHMAP_H
 
-#define INITIAL_CAPACITY 2
+#define INITIAL_CAPACITY 100000
 
 #if !defined(INITIAL_CAPACITY) || INITIAL_CAPACITY <= 1
 #error When INITIAL_CAPACITY <= 1, behavior is unpredicatable
@@ -14,6 +14,7 @@
 #include <array>
 #include <cstddef>
 #include <functional>
+#include <mutex>
 
 // A fast implementation of a closed hash table
 template<typename K, typename V>
@@ -30,7 +31,6 @@ private:
             hash = std::hash<K>()(key);
         }
     };
-
     Pair *table;
     size_t table_size;
 
@@ -51,6 +51,8 @@ private:
 public:
     size_t insertion_count;
     HashMap() : table(new Pair[INITIAL_CAPACITY]), table_size(INITIAL_CAPACITY), insertion_count(0) {}
+
+    HashMap(size_t capacity): table(new Pair[capacity]), table_size(capacity), insertion_count(0){}
 
     HashMap(const HashMap<K, V> &hash_map) {
         *this = hash_map;
@@ -86,7 +88,7 @@ public:
         return *this;
     }
 
-    void insert(const Pair &pair) {
+    void insert(const Pair &&pair) {
         if (insertion_count == table_size) {
             resize(table_size * 2);
         }
