@@ -488,31 +488,11 @@ std::string AvlTree<K, V>::from_node_to_JSON(AvlNode *node) {
 
 template<typename K, typename V>
 void AvlTree<K, V>::form_persistent_file() {
-    //Turn this AVL tree into JSON string
-    std::string tree_JSON = from_tree_to_JSON(root);
-
-    //write JSON string to a file in the current directory
-    std::ofstream output_stream( "tree.txt", std::ios::out);
-    output_stream << tree_JSON;
-
-    //close stream
-    output_stream.close();
+    std::cout << "Functionality not implemented" << std::endl;
 }
 
 template<typename K, typename V>
 void AvlTree<K, V>::clear_persistent_file() {
-    std::ifstream input_stream("tree.txt", std::ios::in);
-
-    //if "output.txt" exits...
-    if(input_stream.good()){
-        //close then open it back in "trunc" mode to clear all content.
-        input_stream.close();
-        std::ofstream output_stream("tree.txt", std::ios::trunc);
-        output_stream.close();
-    }
-        //if not...
-    else{
-        return;
-    }
+    std::cout << "Functionality not implemented" << std::endl;
 }
 #endif //INC_22S_FINAL_PROJ_AVLTREE_H
