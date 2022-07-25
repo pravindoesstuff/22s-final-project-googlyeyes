@@ -10,7 +10,7 @@ available on Dropbox.
 # The (Googly-eyes) Team 👨‍🔬 👨‍🔬
 
 - [Pravin Ramana](https://github.com/pravindoesstuff)
-- Kassi Bertrand (me)
+- [Kassi Bertrand](https://github.com/kassi-bertrand)
 
 # Our solution
 Our solution is a Command Line Interface(CLI) application, and presents itself as follows:
