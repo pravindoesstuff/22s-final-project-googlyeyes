@@ -22,6 +22,7 @@ do not work._
 # Dependencies, Tools, or Frameworks 🛠️
 
 - [CMake](https://cmake.org/): To compile the project.
+- [RapidJSON](https://rapidjson.org/): A JSON parser and generator for C++.
 - [thread library](https://github.com/progschj/ThreadPool): To distribute work to the available compute cores on our different machines.
 - [Stemming library](https://github.com/smassung/porter2_stemmer): For stemming words the search engine will index.
 
