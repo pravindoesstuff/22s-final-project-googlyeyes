@@ -49,8 +49,48 @@ cmake .. && make
 ./22s_final_proj
 ```
 
-# Performance Results
-Our implementation leverage the cpu threads to keep processing cores as busy as possible. As result, parsing
+# How to use the search engine? 🔍
+
+Before performing any search, the program must parse (see performance below) the entire dataset 
+and index keywords within the articles. 
+
+To allow the user to search the corpus, we implemented a **_boolean query processor_**. This
+query processor has the following properties:
+
+- The Boolean expression will be prefixed with a Boolean operator of either AND or OR if there is more than one word of interest.
+- No query will contain both AND and OR.
+- Single word queries (not counting NOT or additional operators below) do not need a boolean operator.
+- Trailing search terms may be preceded with the NOT operator, which indicates articles containing that term should be removed from the result set.
+- Additional Operators: A query can contain zero or more of the following:
+  - ORG <some organization name> - the org operator will search a special index you maintain related to organizations mentioned in the entity metadata
+  - PERSON <some person name> - the person operator will search a special index you maintain related to persons mentioned in the article’s entity metadata.
+  - Additional Operator Notes:
+    - the order of ORG or PERSON doesn’t matter (meaning, you should accept queries that have them in either order)
+    - the operators will always be entered in all caps.
+    - you may assume that neither ORG nor PERSON will be search terms themselves.
+
+Here are some examples:
+- **markets**
+  - This query should return all articles that contain the word _markets_.
+- **AND social network**
+  - This query should return all articles that contain the words “social” and “network” (doesn’t have to be as a 2-word phrase)
+- **AND social network PERSON cramer**
+  - This query should return all articles that contain the words social and network and that mention cramer as a person entity.
+- **AND social network ORG facebook PERSON cramer**
+  - This query should return all articles that contain the words social and network, that have an entity organization 
+  of facebook and that mention cramer as a person entity.
+- **OR snap facebook**
+  - This query should return all articles that contain either _snap_ OR _facebook_
+- **OR facebook meta NOT profits**
+  - This query should return all articles that contain facebook or meta but that do not contain the word profits.
+- **bankruptcy NOT facebook**
+  - This query should return all articles that contain bankruptcy, but not facebook.
+- **OR facebook instagram NOT bankruptcy ORG snap PERSON cramer**
+  - This query should return any article that contains the word facebook OR instagram but that does NOT contain 
+  the word bankruptcy, and the article should have an organization entity with Snap and a person entity of cramer
+  
+## Parsing speed Results
+Our implementation leverages the CPU threads to keep processing cores as busy as possible. As result, parsing
 took significantly less time, here is some performance data:
 
 | Dataset size | 10    | 221   | 6,000 | 300,000 |
